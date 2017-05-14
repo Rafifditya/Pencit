@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.faza.project.pencit.Activity.HistogramActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/tb_hist"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorTransparent"
+                app:title=" " />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:gravity="center"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="@dimen/activity_vertical_margin"
+                android:layout_marginStart="@dimen/activity_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_vertical_margin">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/img_histogram"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="@color/colorPrimary" />
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/gv_img"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/graph_height"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/red_layer"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="@color/colorPrimary" />
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/gv_red"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/graph_height"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:text="@string/green_layer"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="@color/colorPrimary" />
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/gv_green"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/graph_height"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:text="@string/blue_layer"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="@color/colorPrimary" />
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/gv_blue"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/graph_height"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

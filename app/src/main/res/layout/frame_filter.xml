@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorBg"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height"
+        android:background="@color/colorPrimary" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/btn_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/activity_half_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_half_horizontal_margin"
+            android:background="@color/colorTransparent"
+            android:contentDescription="@string/btn_check"
+            android:foreground="?selectableItemBackground"
+            android:src="@drawable/ic_check" />
+
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/activity_half_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_half_horizontal_margin"
+            android:background="@color/colorTransparent"
+            android:contentDescription="@string/btn_close"
+            android:foreground="?selectableItemBackground"
+            android:src="@drawable/ic_close" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/btn_close"
+            android:layout_toStartOf="@id/btn_check" />
+
+    </RelativeLayout>
+
+</LinearLayout>

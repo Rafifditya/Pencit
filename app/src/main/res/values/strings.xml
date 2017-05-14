@@ -1,0 +1,111 @@
+<resources>
+    <string name="app_name">Pencit</string>
+    <string name="menu_button">Menu Button</string>
+    <string name="Image_show">Image Show</string>
+    <string name="memory_lack_error">Image Size is Too Big&#8230;</string>
+    <string name="success">Success</string>
+    <string name="failed">Failed</string>
+    <string name="ok">OK</string>
+    <string name="image_saved">Image Saved</string>
+    <string name="failed_saved_image">Failed Saved Image</string>
+
+    <string name="img_histogram">Image Histogram</string>
+    <string name="red_layer">Red Layer</string>
+    <string name="green_layer">Green Layer</string>
+    <string name="blue_layer">Blue Layer</string>
+    <string name="scrollable">Scrollable ?</string>
+
+    <string name="histogram">Histogram</string>
+    <string name="cdf">CDF</string>
+    <string name="save">Save</string>
+
+    <string name="filter">Filter</string>
+    <string name="enhance">Enhance</string>
+
+    <string name="brightness">Brightness</string>
+    <string name="contrast">Contrast</string>
+    <string name="noise_gaussian">Noise Gaussian</string>
+    <string name="noise_speckle">Noise Speckle</string>
+    <string name="noise_saltpepper">Noise Salt and Pepper</string>
+
+    <string name="btn_check">Button Check</string>
+    <string name="btn_close">Button Close</string>
+
+    <string-array name="menu">
+        <item>Menu 1</item>
+        <item>Menu 2</item>
+        <item>Menu 3</item>
+        <item>Menu 4</item>
+        <item>Menu 5</item>
+        <item>Menu 6</item>
+        <item>@string/brightness</item>
+        <item>@string/contrast</item>
+        <item>@string/noise_gaussian</item>
+        <item>@string/noise_speckle</item>
+        <item>@string/noise_saltpepper</item>
+    </string-array>
+
+    <string-array name="menu1">
+        <item>Original Image</item>
+        <item>Flip Horizontal</item>
+        <item>Flip Vertical</item>
+        <item>Transpose Image</item>
+        <item>Layer Red</item>
+        <item>Layer Green</item>
+        <item>Layer Blue</item>
+        <item>Invert</item>
+    </string-array>
+
+    <string-array name="menu2">
+        <item>Original Image</item>
+        <item>Gray Red</item>
+        <item>Gray Green</item>
+        <item>Gray Blue</item>
+        <item>Gray Mean</item>
+        <item>Black and White</item>
+    </string-array>
+
+    <string-array name="menu3">
+        <item>Original Image</item>
+        <item>128 Bit</item>
+        <item>64 Bit</item>
+        <item>32 Bit</item>
+        <item>16 Bit</item>
+        <item>8 Bit</item>
+        <item>4 Bit</item>
+        <item>2 Bit</item>
+    </string-array>
+
+    <string-array name="menu4">
+        <item>Original Image</item>
+        <item>Auto Level</item>
+        <item>Gray Auto Level</item>
+        <item>Histogram Equalization</item>
+        <item>Sharpness Image</item>
+    </string-array>
+
+    <string-array name="menu5">
+        <item>Original Image</item>
+        <item>Filter 4 Node</item>
+        <item>Filter 4 Node 2</item>
+        <item>Filter 4 Node 3</item>
+        <item>Filter 8 Node</item>
+        <item>Filter 8 Node 2</item>
+        <item>Filter 8 Node 3</item>
+        <item>Filter Rata-Rata</item>
+        <item>Filter Gaussian</item>
+        <item>Filter Median</item>
+    </string-array>
+
+    <string-array name="menu6">
+        <item>Original Image</item>
+        <item>Robert Method</item>
+        <item>Horizontal Robert Method</item>
+        <item>Vertical Robert Method</item>
+        <item>Prewit Method</item>
+        <item>Sobel Method</item>
+        <item>Laplacian Method</item>
+        <item>Normal Sketch</item>
+        <item>Sketch</item>
+    </string-array>
+</resources>
