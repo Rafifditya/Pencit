@@ -1,12 +1,15 @@
 package com.faza.project.pencit.Activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -46,6 +49,7 @@ import java.io.OutputStream;
 public class ImageActivity extends AppCompatActivity {
 
     private final int WRITE_REQUEST_CODE = 9165;
+    private final int GALLERY_REQUEST_CODE = 9166;
 
     private FrameLayout frameImg;
     private ImgAdapter adapter;
@@ -91,6 +95,28 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Bitmap image = null;
+
+        if (resultCode == Activity.RESULT_OK && requestCode == GALLERY_REQUEST_CODE) {
+            Uri imageUri = data.getData();
+
+            try {
+                image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                image = image.copy(image.getConfig(), true);
+            } catch (IOException e) {
+                Log.e("On Activity Result", e.getMessage());
+            }
+
+            if (image != null) {
+                imageProcessing.getNumPatternMatching(StaticBitmap.image, image);
+                ivImg.setImageBitmap(StaticBitmap.image);
+            } else
+                Toast.makeText(ImageActivity.this, "Cannot load image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -117,6 +143,9 @@ public class ImageActivity extends AppCompatActivity {
             case R.id.menu_histogram:
                 gotoHistogram();
                 return true;
+//            case R.id.menu_matching:
+//                getMathingImage();
+//                return true;
             case R.id.menu_save:
                 saveImage();
                 return true;
@@ -256,6 +285,15 @@ public class ImageActivity extends AppCompatActivity {
         intent.putExtra("Title", tvTitle.getText().toString());
 
         startActivity(intent);
+    }
+
+    private void getMathingImage() {
+        Intent intent = new Intent();
+
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), GALLERY_REQUEST_CODE);
     }
 
     private boolean checkPermission() {

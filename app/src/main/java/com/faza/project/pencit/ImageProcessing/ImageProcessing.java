@@ -989,6 +989,73 @@ public class ImageProcessing {
         getNormalSkecthImage(img);
     }
 
+    public void getNumPatternMatching(Bitmap img, Bitmap imgTemplate) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        int widthTemplate = imgTemplate.getWidth();
+        int heightTemplate = imgTemplate.getHeight();
+
+        getGrayAutoLevelImage(img);
+        getGrayAutoLevelImage(imgTemplate);
+
+        Bitmap newImg = img.copy(img.getConfig(), true);
+
+        for (int i = 0; i < (width - widthTemplate); i++) {
+            for (int j = 0; j < (height - heightTemplate); j++) {
+                int x, y;
+//                double up = 0, down, down1 = 0, down2 = 0;
+//
+//                for (x = 0; x < widthTemplate; x++) {
+//                    for (y = 0; y < heightTemplate; y++) {
+//                        int color = img.getPixel((i + x), (j + y));
+//                        int colorTemplate = imgTemplate.getPixel(x, y);
+//
+//                        int r = Color.red(color);
+//                        int rTemplate = Color.red(colorTemplate);
+//
+//                        up += Math.pow(r - rTemplate, 2);
+//                    }
+//                }
+//
+//                for (x = 0; x < widthTemplate; x++) {
+//                    for (y = 0; y < heightTemplate; y++) {
+//                        int color = img.getPixel((i + x), (j + y));
+//                        int colorTemplate = imgTemplate.getPixel(x, y);
+//
+//                        int r = Color.red(color);
+//                        int rTemplate = Color.red(colorTemplate);
+//
+//                        down1 += Math.pow(r, 2);
+//                        down2 += Math.pow(rTemplate, 2);
+//                    }
+//                }
+
+//                down = Math.sqrt(down1 * down2);
+
+                int result = 0;
+
+                for (x = 0; x < widthTemplate; x++) {
+                    for (y = 0; y < heightTemplate; y++) {
+                        int color = img.getPixel((i + x), (j + y));
+                        int colorTemplate = imgTemplate.getPixel(x, y);
+
+                        int r = Color.red(color);
+                        int rTemplate = Color.red(colorTemplate);
+
+                        result += Math.pow(rTemplate - r, 2);
+                    }
+                }
+
+//                int result = (int) (up / down);
+                result = Color.rgb(result, result, result);
+
+                newImg.setPixel(i, j, result);
+            }
+        }
+
+        copyBitmap(newImg, img);
+    }
+
     private int pixelNormalization(int color) {
         if (color < 0)
             color = 0;
@@ -1136,46 +1203,6 @@ public class ImageProcessing {
                 color = Color.rgb(r, g, b);
 
                 img.setPixel(i, j, color);
-            }
-        }
-    }
-
-    public void getAdaptiveThresholdImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
-        int sumR, sumG, sumB;
-
-        for (int i = 0; i < width; i++) {
-            sumR = 0;
-            sumG = 0;
-            sumB = 0;
-
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-
-                int r = Color.red(color);
-                int g = Color.green(color);
-                int b = Color.blue(color);
-
-                sumR += r;
-                sumG += g;
-                sumB += b;
-
-                if (i == 0) {
-                    r = sumR;
-                    g = sumG;
-                    b = sumB;
-                } else {
-                    int colorBev = img.getPixel(i - 1, j);
-
-                    int rBev = Color.red(colorBev);
-                    int gBev = Color.green(colorBev);
-                    int bBev = Color.blue(colorBev);
-
-                    r = rBev + sumR;
-                    g = gBev + sumG;
-                    b = bBev + sumB;
-                }
             }
         }
     }

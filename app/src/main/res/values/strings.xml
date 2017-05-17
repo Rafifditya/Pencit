@@ -17,6 +17,7 @@
 
     <string name="histogram">Histogram</string>
     <string name="cdf">CDF</string>
+    <string name="matching">Matching</string>
     <string name="save">Save</string>
 
     <string name="filter">Filter</string>
