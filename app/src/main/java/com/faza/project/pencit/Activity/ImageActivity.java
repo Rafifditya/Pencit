@@ -417,22 +417,22 @@ public class ImageActivity extends AppCompatActivity {
                 case 7: // Kuantisasi
                     setMenu8();
                     break;
-                case 8: // Rotate
-                    setMenu9();
-                    break;
-                case 9: // Brightness
+//                case 8: // Rotate
+//                    setMenu9();
+//                    break;
+                case 8: // Brightness
                     setMenu10();
                     break;
-                case 10: // Contrast
+                case 9: // Contrast
                     setMenu11();
                     break;
-                case 11: // Noise Gaussian
+                case 10: // Noise Gaussian
                     setMenu12();
                     break;
-                case 12: // Noise Speckle
+                case 11: // Noise Speckle
                     setMenu13();
                     break;
-                case 13: // Noise Salt and Pepper
+                case 12: // Noise Salt and Pepper
                     setMenu14();
                     break;
             }
