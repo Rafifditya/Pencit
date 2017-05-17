@@ -960,8 +960,7 @@ public class ImageProcessing {
                 int newI = (int) (Math.cos(radiansAngle) * i - Math.sin(radiansAngle) * j);
                 int newJ = (int) (Math.sin(radiansAngle) * i + Math.cos(radiansAngle) * j);
 
-//                Log.d("New I", i + ", " + newI);
-//                Log.d("New J", j + ", " + newJ);
+
             }
         }
 

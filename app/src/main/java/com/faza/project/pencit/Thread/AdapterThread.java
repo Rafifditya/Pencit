@@ -76,6 +76,7 @@ public class AdapterThread extends AsyncTask<Integer, Void, Bitmap> {
     private Bitmap setBitmap(String menu) {
         Bitmap img = StaticBitmap.originalImg.copy(StaticBitmap.originalImg.getConfig(), true);
 
+        double[] kernel;
         switch (menu) {
             case "Flip Horizontal":
                 imageProcessing.getHorizontalFlipImage(img);
@@ -144,10 +145,55 @@ public class AdapterThread extends AsyncTask<Integer, Void, Bitmap> {
                 imageProcessing.getSharpnessImage(img);
                 break;
             case "Low Pass Filter":
+                kernel = new double[10];
+
+                kernel[1] = 0;
+                kernel[2] = 0.2;
+                kernel[3] = 0;
+
+                kernel[4] = 0.2;
+                kernel[5] = 0.2;
+                kernel[6] = 0.2;
+
+                kernel[7] = 0;
+                kernel[8] = 0.2;
+                kernel[9] = 0;
+
+                imageProcessing.getFilterImage3x3(img, kernel);
                 break;
             case "High Pass Filter":
+                kernel = new double[10];
+
+                kernel[1] = -1;
+                kernel[2] = -0.5;
+                kernel[3] = 0;
+
+                kernel[4] = -0.5;
+                kernel[5] = 0;
+                kernel[6] = 0.5;
+
+                kernel[7] = 0;
+                kernel[8] = 0.5;
+                kernel[9] = 1;
+
+                imageProcessing.getFilterImage3x3(img, kernel);
                 break;
             case "Band Stop Filter":
+                kernel = new double[10];
+
+                kernel[1] = -1;
+                kernel[2] = -0.5;
+                kernel[3] = 0;
+
+                kernel[4] = -0.5;
+                kernel[5] = 1;
+                kernel[6] = 0.5;
+
+                kernel[7] = 0;
+                kernel[8] = 0.5;
+                kernel[9] = 1;
+
+                imageProcessing.getFilterImage3x3(img, kernel);
                 break;
             case "Robert Method":
                 imageProcessing.getRobertImage(img);
