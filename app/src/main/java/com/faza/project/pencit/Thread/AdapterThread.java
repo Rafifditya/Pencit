@@ -96,6 +96,9 @@ public class AdapterThread extends AsyncTask<Integer, Void, Bitmap> {
             case "Layer Blue":
                 imageProcessing.getBlueLayer(img);
                 break;
+            case "Sepia":
+                imageProcessing.getSepiaImage(img);
+                break;
             case "Invers":
                 imageProcessing.getInvertImg(img);
                 break;

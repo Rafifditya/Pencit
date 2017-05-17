@@ -317,6 +317,33 @@ public class ImageProcessing {
         copyBitmap(imgFlip, img);
     }
 
+    public void getSepiaImage(Bitmap img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int color = img.getPixel(i, j);
+
+                int r = Color.red(color);
+                int g = Color.green(color);
+                int b = Color.blue(color);
+
+                r = (int) ((r * 0.393) + (g * 0.769) + (b * 0.189));
+                g = (int) ((r * 0.349) + (g * 0.686) + (b * 0.168));
+                b = (int) ((r * 0.272) + (g * 0.534) + (b * 0.131));
+
+                r = r > 255 ? 255 : r;
+                g = g > 255 ? 255 : g;
+                b = b > 255 ? 255 : b;
+
+                color = Color.rgb(r, g, b);
+
+                img.setPixel(i, j, color);
+            }
+        }
+    }
+
     private int getBigger(int max, int color) {
         return color > max ? color : max;
     }
