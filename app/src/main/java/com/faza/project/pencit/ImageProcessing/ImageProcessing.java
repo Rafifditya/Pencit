@@ -206,7 +206,7 @@ public class ImageProcessing {
         }
     }
 
-    public void getBlackAndWhite(Bitmap img) {
+    public void getBlackAndWhite(Bitmap img, int threshold) {
         int width = img.getWidth();
         int height = img.getHeight();
 
@@ -216,7 +216,7 @@ public class ImageProcessing {
             for (int j = 0; j < height; j++) {
                 int color = img.getPixel(i, j);
                 int gray = Color.red(color);
-                gray = bwPixelNormalization(gray);
+                gray = bwPixelNormalization(gray, threshold);
 
                 color = Color.rgb(gray, gray, gray);
 
@@ -229,131 +229,19 @@ public class ImageProcessing {
         return bit * (color / bit);
     }
 
-    public void get128Bit(Bitmap img) {
+    public void getBitImage(Bitmap img, int bit) {
         int width = img.getWidth();
         int height = img.getHeight();
+
+        bit = 255 / bit;
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int color = img.getPixel(i, j);
 
-                int r = changeBit(Color.red(color), 2);
-                int g = changeBit(Color.green(color), 2);
-                int b = changeBit(Color.blue(color), 2);
-
-                color = Color.rgb(r, g, b);
-
-                img.setPixel(i, j, color);
-            }
-        }
-    }
-
-    public void get64Bit(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-
-                int r = changeBit(Color.red(color), 4);
-                int g = changeBit(Color.green(color), 4);
-                int b = changeBit(Color.blue(color), 4);
-
-                color = Color.rgb(r, g, b);
-
-                img.setPixel(i, j, color);
-            }
-        }
-    }
-
-    public void get32Bit(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-
-                int r = changeBit(Color.red(color), 8);
-                int g = changeBit(Color.green(color), 8);
-                int b = changeBit(Color.blue(color), 8);
-
-                color = Color.rgb(r, g, b);
-
-                img.setPixel(i, j, color);
-            }
-        }
-    }
-
-    public void get16Bit(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-
-                int r = changeBit(Color.red(color), 16);
-                int g = changeBit(Color.green(color), 16);
-                int b = changeBit(Color.blue(color), 16);
-
-                color = Color.rgb(r, g, b);
-
-                img.setPixel(i, j, color);
-            }
-        }
-    }
-
-    public void get8Bit(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-
-                int r = changeBit(Color.red(color), 32);
-                int g = changeBit(Color.green(color), 32);
-                int b = changeBit(Color.blue(color), 32);
-
-                color = Color.rgb(r, g, b);
-
-                img.setPixel(i, j, color);
-            }
-        }
-    }
-
-    public void get4Bit(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-
-                int r = changeBit(Color.red(color), 64);
-                int g = changeBit(Color.green(color), 64);
-                int b = changeBit(Color.blue(color), 64);
-
-                color = Color.rgb(r, g, b);
-
-                img.setPixel(i, j, color);
-            }
-        }
-    }
-
-    public void get2Bit(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-
-                int r = changeBit(Color.red(color), 128);
-                int g = changeBit(Color.green(color), 128);
-                int b = changeBit(Color.blue(color), 128);
+                int r = changeBit(Color.red(color), bit);
+                int g = changeBit(Color.green(color), bit);
+                int b = changeBit(Color.blue(color), bit);
 
                 color = Color.rgb(r, g, b);
 
@@ -488,39 +376,8 @@ public class ImageProcessing {
     }
 
     public void getGrayAutoLevelImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
-
         getGrayMean(img);
-
-        int color0 = img.getPixel(0, 0);
-        int gray0 = Color.red(color0);
-
-        int grayMin = gray0;
-        int grayMax = gray0;
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-                int gray = Color.red(color);
-
-                grayMin = getSmaller(grayMin, gray);
-                grayMax = getBigger(grayMax, gray);
-            }
-        }
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-
-                int gray = Color.red(color);
-                gray = getAutoLevelColor(gray, grayMin, grayMax);
-
-                color = Color.rgb(gray, gray, gray);
-
-                img.setPixel(i, j, color);
-            }
-        }
+        getAutoLevelImage(img);
     }
 
     private int getHistEqualizationColor(int cumulativeColor, int width, int height) {
@@ -554,6 +411,11 @@ public class ImageProcessing {
                 img.setPixel(i, j, color);
             }
         }
+    }
+
+    public void getGrayHistogramEqualizationImage(Bitmap img) {
+        getGrayMean(img);
+        getHistogramEqualizationImage(img);
     }
 
     public void getSharpnessImage(Bitmap img) {
@@ -1074,13 +936,36 @@ public class ImageProcessing {
         return color;
     }
 
-    private int bwPixelNormalization(int color) {
-        if (color >= 128)
+    private int bwPixelNormalization(int color, int threshold) {
+        if (color >= threshold)
             color = 255;
         else
             color = 0;
 
         return color;
+    }
+
+    public void changeRotation(Bitmap img, int angle) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        double radiansAngle = Math.toRadians(angle);
+
+        Bitmap newImg = Bitmap.createBitmap(width, height, img.getConfig());
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int color = img.getPixel(i, j);
+
+                int newI = (int) (Math.cos(radiansAngle) * i - Math.sin(radiansAngle) * j);
+                int newJ = (int) (Math.sin(radiansAngle) * i + Math.cos(radiansAngle) * j);
+
+//                Log.d("New I", i + ", " + newI);
+//                Log.d("New J", j + ", " + newJ);
+            }
+        }
+
+        copyBitmap(newImg, img);
     }
 
     public void changeBrightness(Bitmap img, int changeBrightness) {

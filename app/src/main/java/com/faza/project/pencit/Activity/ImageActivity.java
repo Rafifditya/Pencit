@@ -174,6 +174,7 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     private void setMenuEnhance(String title, int defaultProgress, int maxProgress) {
+        String rotation = getString(R.string.rotate);
         String brightness = getString(R.string.brightness);
         String contrast = getString(R.string.contrast);
         String gaussian = getString(R.string.noise_gaussian);
@@ -190,7 +191,9 @@ public class ImageActivity extends AppCompatActivity {
         sbEnhance.setMax(maxProgress);
         sbEnhance.setProgress(defaultProgress);
 
-        if (title.equals(brightness))
+        if (title.equals(rotation))
+            sbEnhance.setOnSeekBarChangeListener(new RotationChangeListener());
+        else if (title.equals(brightness))
             sbEnhance.setOnSeekBarChangeListener(new BrightnessChangeListener());
         else if (title.equals(contrast))
             sbEnhance.setOnSeekBarChangeListener(new ContrastChangeListener());
@@ -210,7 +213,7 @@ public class ImageActivity extends AppCompatActivity {
         frameImg.addView(menuView);
     }
 
-    private void setMenu1() {
+    private void setMenu1() { // Flip
         String[] menu = getResources().getStringArray(R.array.menu1);
         setMenuFilter(menu);
     }
@@ -241,6 +244,24 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     private void setMenu7() {
+        String[] menu = getResources().getStringArray(R.array.menu7);
+        setMenuFilter(menu);
+    }
+
+    private void setMenu8() {
+        String[] menu = getResources().getStringArray(R.array.menu8);
+        setMenuFilter(menu);
+    }
+
+    private void setMenu9() {
+        int defaultProgress = 0;
+        int maxProgress = 360;
+        String rotate = getString(R.string.rotate);
+
+        setMenuEnhance(rotate, defaultProgress, maxProgress);
+    }
+
+    private void setMenu10() {
         int defaultProgress = 128;
         int maxProgress = 255;
         String brightness = getString(R.string.brightness);
@@ -248,7 +269,7 @@ public class ImageActivity extends AppCompatActivity {
         setMenuEnhance(brightness, defaultProgress, maxProgress);
     }
 
-    private void setMenu8() {
+    private void setMenu11() {
         int defaultProgress = 20;
         int maxProgress = 40;
         String contrast = getString(R.string.contrast);
@@ -256,7 +277,7 @@ public class ImageActivity extends AppCompatActivity {
         setMenuEnhance(contrast, defaultProgress, maxProgress);
     }
 
-    private void setMenu9() {
+    private void setMenu12() {
         int defaultProgress = 0;
         int maxProgress = 100;
         String gaussian = getString(R.string.noise_gaussian);
@@ -264,7 +285,7 @@ public class ImageActivity extends AppCompatActivity {
         setMenuEnhance(gaussian, defaultProgress, maxProgress);
     }
 
-    private void setMenu10() {
+    private void setMenu13() {
         int defaultProgress = 0;
         int maxProgress = 100;
         String speckle = getString(R.string.noise_speckle);
@@ -272,7 +293,7 @@ public class ImageActivity extends AppCompatActivity {
         setMenuEnhance(speckle, defaultProgress, maxProgress);
     }
 
-    private void setMenu11() {
+    private void setMenu14() {
         int defaultProgress = 0;
         int maxProgress = 100;
         String saltPepper = getString(R.string.noise_saltpepper);
@@ -287,14 +308,14 @@ public class ImageActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void getMathingImage() {
-        Intent intent = new Intent();
-
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-
-        startActivityForResult(Intent.createChooser(intent, "Select Image"), GALLERY_REQUEST_CODE);
-    }
+//    private void getMathingImage() {
+//        Intent intent = new Intent();
+//
+//        intent.setType("image/*");
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+//
+//        startActivityForResult(Intent.createChooser(intent, "Select Image"), GALLERY_REQUEST_CODE);
+//    }
 
     private boolean checkPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -372,38 +393,47 @@ public class ImageActivity extends AppCompatActivity {
             int tabPosition = tab.getPosition();
 
             switch (tabPosition) {
-                case 0:
+                case 0: // Flip
                     setMenu1();
                     break;
-                case 1:
+                case 1: // Layer
                     setMenu2();
                     break;
-                case 2:
+                case 2: // Grayscale
                     setMenu3();
                     break;
-                case 3:
+                case 3: // Black and White
                     setMenu4();
                     break;
-                case 4:
+                case 4: // Reduksi Noise
                     setMenu5();
                     break;
-                case 5:
+                case 5: // Filter
                     setMenu6();
                     break;
-                case 6:
+                case 6: // Deteksi Tepi
                     setMenu7();
                     break;
-                case 7:
+                case 7: // Kuantisasi
                     setMenu8();
                     break;
-                case 8:
+                case 8: // Rotate
                     setMenu9();
                     break;
-                case 9:
+                case 9: // Brightness
                     setMenu10();
                     break;
-                case 10:
+                case 10: // Contrast
                     setMenu11();
+                    break;
+                case 11: // Noise Gaussian
+                    setMenu12();
+                    break;
+                case 12: // Noise Speckle
+                    setMenu13();
+                    break;
+                case 13: // Noise Salt and Pepper
+                    setMenu14();
                     break;
             }
         }
@@ -416,6 +446,29 @@ public class ImageActivity extends AppCompatActivity {
         @Override
         public void onTabReselected(TabLayout.Tab tab) {
             // Do nothing
+        }
+    }
+
+    private class RotationChangeListener implements SeekBar.OnSeekBarChangeListener {
+
+        private Bitmap img;
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            img = StaticBitmap.originalImg.copy(StaticBitmap.originalImg.getConfig(), true);
+
+            imageProcessing.changeRotation(img, progress);
+            ivImg.setImageBitmap(img);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            // Do nothing
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            StaticBitmap.image = img;
         }
     }
 

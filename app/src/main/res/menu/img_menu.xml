@@ -7,10 +7,10 @@
         android:title="@string/histogram"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menu_matching"
-        android:title="@string/matching"
-        app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/menu_matching"-->
+        <!--android:title="@string/matching"-->
+        <!--app:showAsAction="never" />-->
 
     <item
         android:id="@+id/menu_save"

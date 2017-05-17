@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -77,170 +76,119 @@ public class AdapterThread extends AsyncTask<Integer, Void, Bitmap> {
     private Bitmap setBitmap(String menu) {
         Bitmap img = StaticBitmap.originalImg.copy(StaticBitmap.originalImg.getConfig(), true);
 
-        if (menu.equals("Flip Horizontal"))
-            imageProcessing.getHorizontalFlipImage(img);
-        else if (menu.equals("Flip Vertical"))
-            imageProcessing.getVerticalFlipImage(img);
-        else if (menu.equals("Transpose Image"))
-            imageProcessing.getTransposeImage(img);
-        else if (menu.equals("Layer Red"))
-            imageProcessing.getRedLayer(img);
-        else if (menu.equals("Layer Green"))
-            imageProcessing.getGreenLayer(img);
-        else if (menu.equals("Layer Blue"))
-            imageProcessing.getBlueLayer(img);
-        else if (menu.equals("Invert"))
-            imageProcessing.getInvertImg(img);
-        else if (menu.equals("Gray Red"))
-            imageProcessing.getGrayRed(img);
-        else if (menu.equals("Gray Green"))
-            imageProcessing.getGrayGreen(img);
-        else if (menu.equals("Gray Blue"))
-            imageProcessing.getGrayBlue(img);
-        else if (menu.equals("Gray Mean"))
-            imageProcessing.getGrayMean(img);
-        else if (menu.equals("Black and White"))
-            imageProcessing.getBlackAndWhite(img);
-        else if (menu.equals("128 Bit"))
-            imageProcessing.get128Bit(img);
-        else if (menu.equals("64 Bit"))
-            imageProcessing.get64Bit(img);
-        else if (menu.equals("32 Bit"))
-            imageProcessing.get32Bit(img);
-        else if (menu.equals("16 Bit"))
-            imageProcessing.get16Bit(img);
-        else if (menu.equals("8 Bit"))
-            imageProcessing.get8Bit(img);
-        else if (menu.equals("4 Bit"))
-            imageProcessing.get4Bit(img);
-        else if (menu.equals("2 Bit"))
-            imageProcessing.get2Bit(img);
-        else if (menu.equals("Auto Level"))
-            imageProcessing.getAutoLevelImage(img);
-        else if (menu.equals("Gray Auto Level"))
-            imageProcessing.getGrayAutoLevelImage(img);
-        else if (menu.equals("Histogram Equalization"))
-            imageProcessing.getHistogramEqualizationImage(img);
-        else if (menu.equals("Sharpness Image"))
-            imageProcessing.getSharpnessImage(img);
-        else if (menu.equals("Filter 4 Node")) {
-            double[] filter = new double[10];
-
-            filter[1] = 0;
-            filter[2] = 0.2;
-            filter[3] = 0;
-
-            filter[4] = 0.2;
-            filter[5] = 0.2;
-            filter[6] = 0.2;
-
-            filter[7] = 0;
-            filter[8] = 0.2;
-            filter[9] = 0;
-
-            imageProcessing.getFilterImage3x3(img, filter);
-        } else if (menu.equals("Filter 4 Node 2")) {
-            double[] filter = new double[10];
-
-            filter[1] = 0;
-            filter[2] = -0.5;
-            filter[3] = 0;
-
-            filter[4] = -0.5;
-            filter[5] = 0;
-            filter[6] = 0.5;
-
-            filter[7] = 0;
-            filter[8] = 0.5;
-            filter[9] = 0;
-
-            imageProcessing.getFilterImage3x3(img, filter);
-        } else if (menu.equals("Filter 4 Node 3")) {
-            double[] filter = new double[10];
-
-            filter[1] = 0;
-            filter[2] = -0.5;
-            filter[3] = 0;
-
-            filter[4] = -0.5;
-            filter[5] = 1;
-            filter[6] = 0.5;
-
-            filter[7] = 0;
-            filter[8] = 0.5;
-            filter[9] = 0;
-
-            imageProcessing.getFilterImage3x3(img, filter);
-        } else if (menu.equals("Filter 8 Node")) {
-            double[] filter = new double[10];
-
-            filter[1] = 0.1;
-            filter[2] = 0.1;
-            filter[3] = 0.1;
-
-            filter[4] = 0.1;
-            filter[5] = 0.2;
-            filter[6] = 0.1;
-
-            filter[7] = 0.1;
-            filter[8] = 0.1;
-            filter[9] = 0.1;
-
-            imageProcessing.getFilterImage3x3(img, filter);
-        } else if (menu.equals("Filter 8 Node 2")) {
-            double[] filter = new double[10];
-
-            filter[1] = -1;
-            filter[2] = -0.5;
-            filter[3] = 0;
-
-            filter[4] = -0.5;
-            filter[5] = 0;
-            filter[6] = 0.5;
-
-            filter[7] = 0;
-            filter[8] = 0.5;
-            filter[9] = 1;
-
-            imageProcessing.getFilterImage3x3(img, filter);
-        } else if (menu.equals("Filter 8 Node 3")) {
-            double[] filter = new double[10];
-
-            filter[1] = -1;
-            filter[2] = -0.5;
-            filter[3] = 0;
-
-            filter[4] = -0.5;
-            filter[5] = 1;
-            filter[6] = 0.5;
-
-            filter[7] = 0;
-            filter[8] = 0.5;
-            filter[9] = 1;
-
-            imageProcessing.getFilterImage3x3(img, filter);
-        } else if (menu.equals("Filter Rata-Rata"))
-            imageProcessing.getMeanFilterImage(img);
-        else if (menu.equals("Filter Gaussian"))
-            imageProcessing.getGaussianFilterImage(img);
-        else if (menu.equals("Filter Median"))
-            imageProcessing.getMedianFilterImage(img);
-        else if (menu.equals("Robert Method"))
-            imageProcessing.getRobertImage(img);
-        else if (menu.equals("Horizontal Robert Method"))
-            imageProcessing.getHorizontalRobertImage(img);
-        else if (menu.equals("Vertical Robert Method"))
-            imageProcessing.getVerticalRobertImage(img);
-        else if (menu.equals("Prewit Method"))
-            imageProcessing.getPrewitImage(img);
-        else if (menu.equals("Sobel Method"))
-            imageProcessing.getSobelImage(img);
-        else if (menu.equals("Laplacian Method"))
-            imageProcessing.getLaplacianImage(img);
-        else if (menu.equals("Normal Sketch"))
-            imageProcessing.getNormalSkecthImage(img);
-        else if (menu.equals("Sketch"))
-            imageProcessing.getSketchImage(img);
+        switch (menu) {
+            case "Flip Horizontal":
+                imageProcessing.getHorizontalFlipImage(img);
+                break;
+            case "Flip Vertical":
+                imageProcessing.getVerticalFlipImage(img);
+                break;
+            case "Flip Horizontal-Vertical":
+                imageProcessing.getTransposeImage(img);
+                break;
+            case "Layer Red":
+                imageProcessing.getRedLayer(img);
+                break;
+            case "Layer Green":
+                imageProcessing.getGreenLayer(img);
+                break;
+            case "Layer Blue":
+                imageProcessing.getBlueLayer(img);
+                break;
+            case "Invers":
+                imageProcessing.getInvertImg(img);
+                break;
+            case "Grayscale Red":
+                imageProcessing.getGrayRed(img);
+                break;
+            case "Grayscale Green":
+                imageProcessing.getGrayGreen(img);
+                break;
+            case "Grayscale Blue":
+                imageProcessing.getGrayBlue(img);
+                break;
+            case "Grayscale Mean":
+                imageProcessing.getGrayMean(img);
+                break;
+            case "Black and White":
+                imageProcessing.getBlackAndWhite(img, 128);
+                break;
+            case "Black and White 100":
+                imageProcessing.getBlackAndWhite(img, 100);
+                break;
+            case "Black and White 200":
+                imageProcessing.getBlackAndWhite(img, 200);
+                break;
+            case "Filter Mean":
+                imageProcessing.getMeanFilterImage(img);
+                break;
+            case "Filter Gaussian":
+                imageProcessing.getGaussianFilterImage(img);
+                break;
+            case "Filter Median":
+                imageProcessing.getMedianFilterImage(img);
+                break;
+            case "Auto Level":
+                imageProcessing.getAutoLevelImage(img);
+                break;
+            case "Grayscale Auto Level":
+                imageProcessing.getGrayAutoLevelImage(img);
+                break;
+            case "Histogram Equalization":
+                imageProcessing.getHistogramEqualizationImage(img);
+                break;
+            case "Grayscale Histogram Equalization":
+                imageProcessing.getGrayHistogramEqualizationImage(img);
+                break;
+            case "Sharpness":
+                imageProcessing.getSharpnessImage(img);
+                break;
+            case "Low Pass Filter":
+                break;
+            case "High Pass Filter":
+                break;
+            case "Band Stop Filter":
+                break;
+            case "Robert Method":
+                imageProcessing.getRobertImage(img);
+                break;
+            case "Prewitt Method":
+                imageProcessing.getPrewitImage(img);
+                break;
+            case "Sobel Method":
+                imageProcessing.getSobelImage(img);
+                break;
+            case "Laplacian Method":
+                imageProcessing.getLaplacianImage(img);
+                break;
+            case "Sketch":
+                imageProcessing.getNormalSkecthImage(img);
+                break;
+            case "New Sketch":
+                imageProcessing.getSketchImage(img);
+                break;
+            case "Kuantisasi 2 bit":
+                imageProcessing.getBitImage(img, 2);
+                break;
+            case "Kuantisasi 4 bit":
+                imageProcessing.getBitImage(img, 4);
+                break;
+            case "Kuantisasi 8 bit":
+                imageProcessing.getBitImage(img, 8);
+                break;
+            case "Kuantisasi 16 bit":
+                imageProcessing.getBitImage(img, 16);
+                break;
+            case "Kuantisasi 32 bit":
+                imageProcessing.getBitImage(img, 32);
+                break;
+            case "Kuantisasi 64 bit":
+                imageProcessing.getBitImage(img, 64);
+                break;
+            case "Kuantisasi 128 bit":
+                imageProcessing.getBitImage(img, 128);
+                break;
+        }
 
         return img;
     }
