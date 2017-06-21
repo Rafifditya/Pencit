@@ -14,6 +14,7 @@
     <string name="green_layer">Green Layer</string>
     <string name="blue_layer">Blue Layer</string>
     <string name="scrollable">Scrollable ?</string>
+    <string name="matching_dialog">Detect matching pattern...</string>
 
     <string name="histogram">Histogram</string>
     <string name="cdf">CDF</string>
@@ -107,6 +108,8 @@
         <item>Prewitt Method</item>
         <item>Sobel Method</item>
         <item>Laplacian Method</item>
+        <item>Hilditch Thinning</item>
+        <item>Zhang-Suen Thinning</item>
         <item>Sketch</item>
         <item>New Sketch</item>
     </string-array>

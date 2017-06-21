@@ -210,6 +210,12 @@ public class AdapterThread extends AsyncTask<Integer, Void, Bitmap> {
             case "Laplacian Method":
                 imageProcessing.getLaplacianImage(img);
                 break;
+            case "Hilditch Thinning":
+                imageProcessing.getHilditchThinningImage(img);
+                break;
+            case "Zhang-Suen Thinning":
+                imageProcessing.getZhangSuenThinningImage(img);
+                break;
             case "Sketch":
                 imageProcessing.getNormalSkecthImage(img);
                 break;

@@ -4,10 +4,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+import com.faza.project.pencit.Models.Point;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -269,12 +272,16 @@ public class ImageProcessing {
         Bitmap imgFlip = Bitmap.createBitmap(width, height, img.getConfig());
 
         for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int backWidth = (width - 1) - i;
-                int backColor = img.getPixel(backWidth, j);
+//            if (i % 3 == 0) {
+                for (int j = 0; j < height; j++) {
+                    int backWidth = (width - 1) - i;
+                    int backColor = img.getPixel(backWidth, j);
 
-                imgFlip.setPixel(i, j, backColor);
-            }
+//                    int backColor = img.getPixel(i, j);
+
+                    imgFlip.setPixel(i, j, backColor);
+                }
+//            }
         }
 
         copyBitmap(imgFlip, img);
@@ -333,9 +340,9 @@ public class ImageProcessing {
                 g = (int) ((r * 0.349) + (g * 0.686) + (b * 0.168));
                 b = (int) ((r * 0.272) + (g * 0.534) + (b * 0.131));
 
-                r = r > 255 ? 255 : r;
-                g = g > 255 ? 255 : g;
-                b = b > 255 ? 255 : b;
+                r = pixelNormalization(r);
+                g = pixelNormalization(g);
+                b = pixelNormalization(b);
 
                 color = Color.rgb(r, g, b);
 
@@ -843,39 +850,178 @@ public class ImageProcessing {
         copyBitmap(imgFilter, img);
     }
 
+    private int getA(Bitmap img, int i, int j) {
+        int count = 0;
+
+        int p2 = get01Pixel(img.getPixel(i, j - 1));
+        int p3 = get01Pixel(img.getPixel(i + 1, j - 1));
+        int p4 = get01Pixel(img.getPixel(i + 1, j));
+        int p5 = get01Pixel(img.getPixel(i + 1, j + 1));
+        int p6 = get01Pixel(img.getPixel(i, j + 1));
+        int p7 = get01Pixel(img.getPixel(i - 1, j + 1));
+        int p8 = get01Pixel(img.getPixel(i - 1, j));
+        int p9 = get01Pixel(img.getPixel(i - 1, j - 1));
+
+        if (p2 == 0 && p3 == 1)
+            count++;
+
+        if (p3 == 0 && p4 == 1)
+            count++;
+
+        if (p4 == 0 && p5 == 1)
+            count++;
+
+        if (p5 == 0 && p6 == 1)
+            count++;
+
+        if (p6 == 0 && p7 == 1)
+            count++;
+
+        if (p7 == 0 && p8 == 1)
+            count++;
+
+        if (p8 == 0 && p9 == 1)
+            count++;
+
+        if (p9 == 0 && p2 == 1)
+            count++;
+
+        return count;
+    }
+
+    private int getB(Bitmap img, int i, int j) {
+        int p2 = get01Pixel(img.getPixel(i, j - 1));
+        int p3 = get01Pixel(img.getPixel(i + 1, j - 1));
+        int p4 = get01Pixel(img.getPixel(i + 1, j));
+        int p5 = get01Pixel(img.getPixel(i + 1, j + 1));
+        int p6 = get01Pixel(img.getPixel(i, j + 1));
+        int p7 = get01Pixel(img.getPixel(i - 1, j + 1));
+        int p8 = get01Pixel(img.getPixel(i - 1, j));
+        int p9 = get01Pixel(img.getPixel(i - 1, j - 1));
+
+        return p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
+    }
+
+    private int get01Pixel(int color) {
+        int white = Color.rgb(255, 255, 255);
+        return color == white ? 0 : 1;
+    }
+
+    public void getHilditchThinningImage(Bitmap img) {
+        int a, b;
+        boolean hasChange;
+
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        getBlackAndWhite(img, 128);
+
+        do {
+            hasChange = false;
+
+            for (int i = 1; (i + 1) < width; i++) {
+                for (int j = 1; (j + 1) < height; j++) {
+                    a = getA(img, i, j);
+                    b = getB(img, i, j);
+
+                    int p1 = get01Pixel(img.getPixel(i, j));
+                    int p2 = get01Pixel(img.getPixel(i, j - 1));
+                    int p4 = get01Pixel(img.getPixel(i + 1, j));
+                    int p6 = get01Pixel(img.getPixel(i, j + 1));
+                    int p8 = get01Pixel(img.getPixel(i - 1, j));
+
+                    if (p1 == 1 && b >= 2 && b <= 6 && a == 1
+                            && ((p2 * p4 * p8) == 0 || getA(img, i, j - 1) != 1)
+                            && ((p2 * p4 * p6) == 0 || getA(img, i + 1, j) != 1))
+                    {
+                        int color = Color.rgb(255, 255, 255);
+                        img.setPixel(i, j, color);
+
+                        hasChange = true;
+                    }
+                }
+            }
+        } while (hasChange);
+    }
+
+    public void getZhangSuenThinningImage(Bitmap img) {
+        int a, b;
+        ArrayList<Point> pointsToChange = new ArrayList<>();
+        boolean hasChange;
+
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        getBlackAndWhite(img, 128);
+
+        do {
+            hasChange = false;
+
+            for (int i = 1; i + 1 < width; i++) {
+                for (int j = 1; j + 1 < height; j++) {
+                    a = getA(img, i, j);
+                    b = getB(img, i, j);
+
+                    int p1 = get01Pixel(img.getPixel(i, j));
+                    int p2 = get01Pixel(img.getPixel(i, j - 1));
+                    int p4 = get01Pixel(img.getPixel(i + 1, j));
+                    int p6 = get01Pixel(img.getPixel(i, j + 1));
+                    int p8 = get01Pixel(img.getPixel(i - 1, j));
+
+                    if (p1 == 1 && b >= 2 && b <= 6 && a == 1
+                            && ((p2 * p4 * p6) == 0)
+                            && ((p4 * p6 * p8) == 0))
+                    {
+                        pointsToChange.add(new Point(i, j));
+                        hasChange = true;
+                    }
+                }
+            }
+
+            for (Point point : pointsToChange) {
+                int color = Color.rgb(255, 255, 255);
+                img.setPixel(point.getI(), point.getJ(), color);
+            }
+
+            pointsToChange.clear();
+
+            for (int i = 1; i + 1 < width; i++) {
+                for (int j = 1; j + 1 < height; j++) {
+                    a = getA(img, i, j);
+                    b = getB(img, i, j);
+
+                    int p1 = get01Pixel(img.getPixel(i, j));
+                    int p2 = get01Pixel(img.getPixel(i, j - 1));
+                    int p4 = get01Pixel(img.getPixel(i + 1, j));
+                    int p6 = get01Pixel(img.getPixel(i, j + 1));
+                    int p8 = get01Pixel(img.getPixel(i - 1, j));
+
+                    if (p1 == 1 && b >= 2 && b <= 6 && a == 1
+                            && ((p2 * p4 * p8) == 0)
+                            && ((p2 * p6 * p8) == 0))
+                    {
+                        pointsToChange.add(new Point(i, j));
+                        hasChange = true;
+                    }
+                }
+            }
+
+            for (Point point : pointsToChange) {
+                int color = Color.rgb(255, 255, 255);
+                img.setPixel(point.getI(), point.getJ(), color);
+            }
+
+            pointsToChange.clear();
+        } while (hasChange);
+    }
+
     public void getNormalSkecthImage(Bitmap img) {
         getSobelImage(img);
         getInvertImg(img);
     }
 
     public void getSketchImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
 
-        getGrayAutoLevelImage(img);
-
-        Bitmap img2 = img.copy(img.getConfig(), true);
-
-        getNormalSkecthImage(img);
-        getMedianFilterImage(img2);
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-                int color2 = img2.getPixel(i, j);
-
-                int r = Color.red(color);
-                int r2 = Color.red(color2);
-
-                r += r2;
-
-                color = Color.rgb(r, r, r);
-
-                img.setPixel(i, j, color);
-            }
-        }
-
-        getNormalSkecthImage(img);
     }
 
     public void getNumPatternMatching(Bitmap img, Bitmap imgTemplate) {
@@ -887,62 +1033,68 @@ public class ImageProcessing {
         getGrayAutoLevelImage(img);
         getGrayAutoLevelImage(imgTemplate);
 
-        Bitmap newImg = img.copy(img.getConfig(), true);
+        Bitmap newImg = Bitmap.createBitmap(width, height, img.getConfig());
 
-        for (int i = 0; i < (width - widthTemplate); i++) {
-            for (int j = 0; j < (height - heightTemplate); j++) {
+        for (int i = 0; i < (width - widthTemplate); i += widthTemplate) {
+            for (int j = 0; j < (height - heightTemplate); j += heightTemplate) {
                 int x, y;
-//                double up = 0, down, down1 = 0, down2 = 0;
-//
-//                for (x = 0; x < widthTemplate; x++) {
-//                    for (y = 0; y < heightTemplate; y++) {
-//                        int color = img.getPixel((i + x), (j + y));
-//                        int colorTemplate = imgTemplate.getPixel(x, y);
-//
-//                        int r = Color.red(color);
-//                        int rTemplate = Color.red(colorTemplate);
-//
-//                        up += Math.pow(r - rTemplate, 2);
-//                    }
-//                }
-//
-//                for (x = 0; x < widthTemplate; x++) {
-//                    for (y = 0; y < heightTemplate; y++) {
-//                        int color = img.getPixel((i + x), (j + y));
-//                        int colorTemplate = imgTemplate.getPixel(x, y);
-//
-//                        int r = Color.red(color);
-//                        int rTemplate = Color.red(colorTemplate);
-//
-//                        down1 += Math.pow(r, 2);
-//                        down2 += Math.pow(rTemplate, 2);
-//                    }
-//                }
-
-//                down = Math.sqrt(down1 * down2);
-
-                int result = 0;
 
                 for (x = 0; x < widthTemplate; x++) {
                     for (y = 0; y < heightTemplate; y++) {
+                        int result;
+
                         int color = img.getPixel((i + x), (j + y));
                         int colorTemplate = imgTemplate.getPixel(x, y);
 
                         int r = Color.red(color);
                         int rTemplate = Color.red(colorTemplate);
 
-                        result += Math.pow(rTemplate - r, 2);
+                        result = rTemplate - r;
+//                        result = (int) Math.sqrt(result);
+//                        result = pixelNormalization(result);
+                        result = bwPixelNormalization(result, 200);
+                        result = Color.rgb(result, result, result);
+
+                        newImg.setPixel((i + x), (j + y), result);
                     }
                 }
 
-//                int result = (int) (up / down);
-                result = Color.rgb(result, result, result);
-
-                newImg.setPixel(i, j, result);
+//                int color = img.getPixel(i, j);
+//                int colorTemplate = imgTemplate.getPixel(x, y);
+//
+//                int r = Color.red(color);
+//                int rTemplate = Color.red(colorTemplate);
+//
+//                int result = rTemplate - r;
+//                int newColor = Color.rgb(result, result, result);
+//
+//                y++;
+//
+//                if (y == heightTemplate)
+//                    y = 0;
             }
+//
+//            x++;
+//
+//            if (x == widthTemplate)
+//                x = 0;
         }
 
         copyBitmap(newImg, img);
+
+//        int result = 0;
+//
+//        for (int i = 0; i < width; i++) {
+//            for (int j = 0; j < height; j++) {
+//                int color = newImg.getPixel(i, j);
+//                int r = Color.red(color);
+//
+//                if (r == 255)
+//                    result++;
+//            }
+//        }
+
+//        return result;
     }
 
     private int pixelNormalization(int color) {

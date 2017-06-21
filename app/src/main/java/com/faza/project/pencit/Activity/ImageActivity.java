@@ -2,6 +2,7 @@ package com.faza.project.pencit.Activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,6 +37,7 @@ import com.faza.project.pencit.Adapter.ImgAdapter;
 import com.faza.project.pencit.ImageProcessing.ImageProcessing;
 import com.faza.project.pencit.R;
 import com.faza.project.pencit.Session.StaticBitmap;
+import com.faza.project.pencit.Thread.PatternMatchingThread;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -109,8 +111,16 @@ public class ImageActivity extends AppCompatActivity {
             }
 
             if (image != null) {
-                imageProcessing.getNumPatternMatching(StaticBitmap.image, image);
-                ivImg.setImageBitmap(StaticBitmap.image);
+                String dialogText = getString(R.string.matching_dialog);
+                ProgressDialog dialog = new ProgressDialog(this);
+
+                dialog.setMessage(dialogText);
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+
+                PatternMatchingThread patternMatchingThread = new PatternMatchingThread(dialog, ivImg);
+                patternMatchingThread.execute(StaticBitmap.image, image);
             } else
                 Toast.makeText(ImageActivity.this, "Cannot load image", Toast.LENGTH_SHORT).show();
         }
@@ -308,14 +318,14 @@ public class ImageActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-//    private void getMathingImage() {
-//        Intent intent = new Intent();
-//
-//        intent.setType("image/*");
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//
-//        startActivityForResult(Intent.createChooser(intent, "Select Image"), GALLERY_REQUEST_CODE);
-//    }
+    private void getMathingImage() {
+        Intent intent = new Intent();
+
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), GALLERY_REQUEST_CODE);
+    }
 
     private boolean checkPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
