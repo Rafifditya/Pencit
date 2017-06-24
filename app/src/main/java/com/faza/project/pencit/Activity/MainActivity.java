@@ -44,9 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
         ImageButton btnGallery = (ImageButton) findViewById(R.id.btn_gallery);
         ImageButton btnCamera = (ImageButton) findViewById(R.id.btn_camera);
+        ImageButton btnLevitation = (ImageButton) findViewById(R.id.btn_levitation);
 
         btnGallery.setOnClickListener(new GalleryClickListener());
         btnCamera.setOnClickListener(new CameraClickListener());
+        btnLevitation.setOnClickListener(new LevitationClickListener());
 
         rvHistory = (RecyclerView) findViewById(R.id.rv_history);
     }
@@ -154,6 +156,15 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             if (checkPermission())
                 openCamera();
+        }
+    }
+
+    private class LevitationClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(MainActivity.this, LevitationActivity.class);
+            startActivity(intent);
         }
     }
 }

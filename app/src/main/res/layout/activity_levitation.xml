@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.faza.project.pencit.Activity.LevitationActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/tb_levitation"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorTransparent"
+                app:title=" " />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:gravity="center"
+                android:text="@string/levitation"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="@dimen/activity_vertical_margin"
+                android:layout_marginStart="@dimen/activity_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_vertical_margin">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="8"
+                    android:text="@string/img_background"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/colorPrimary" />
+
+                <ImageButton
+                    android:id="@+id/btn_img_background"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:background="@color/colorTransparent"
+                    android:contentDescription="@string/img_background"
+                    android:foreground="?selectableItemBackground"
+                    android:src="@drawable/ic_add_a_photo" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_img_background"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/graph_height"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/img_background"
+                android:scaleType="fitXY"
+                android:src="@drawable/image_not_found" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="8"
+                    android:text="@string/img_without_item"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/colorPrimary" />
+
+                <ImageButton
+                    android:id="@+id/btn_img_without_item"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:background="@color/colorTransparent"
+                    android:contentDescription="@string/img_without_item"
+                    android:foreground="?selectableItemBackground"
+                    android:src="@drawable/ic_add_a_photo" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_img_without_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/graph_height"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/img_without_item"
+                android:scaleType="fitXY"
+                android:src="@drawable/image_not_found" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="8"
+                    android:text="@string/img_with_item"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/colorPrimary" />
+
+                <ImageButton
+                    android:id="@+id/btn_img_with_item"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:background="@color/colorTransparent"
+                    android:contentDescription="@string/img_with_item"
+                    android:foreground="?selectableItemBackground"
+                    android:src="@drawable/ic_add_a_photo" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_img_with_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/graph_height"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/img_with_item"
+                android:scaleType="fitXY"
+                android:src="@drawable/image_not_found" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="6"
+                    android:text="@string/img_levitation"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/colorPrimary" />
+
+                <ImageButton
+                    android:id="@+id/btn_img_levitation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:background="@color/colorTransparent"
+                    android:contentDescription="@string/img_levitation"
+                    android:foreground="?selectableItemBackground"
+                    android:src="@drawable/ic_done" />
+
+                <ImageButton
+                    android:id="@+id/btn_img_save"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:background="@color/colorTransparent"
+                    android:contentDescription="@string/save"
+                    android:foreground="?selectableItemBackground"
+                    android:src="@drawable/ic_file_download" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_img_levitation"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/graph_height"
+                android:layout_marginBottom="@dimen/activity_2x_vertical_margin"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/img_levitation"
+                android:scaleType="fitXY"
+                android:src="@drawable/image_not_found" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:background="@color/colorPrimary" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

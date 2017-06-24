@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -156,6 +157,9 @@ public class ImageActivity extends AppCompatActivity {
 //            case R.id.menu_matching:
 //                getMathingImage();
 //                return true;
+            case R.id.menu_kmeans_cluster:
+                setKMeansClusterDialog();
+                return true;
             case R.id.menu_save:
                 saveImage();
                 return true;
@@ -338,6 +342,23 @@ public class ImageActivity extends AppCompatActivity {
             }
         } else
             return true;
+    }
+
+    private void setKMeansClusterDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String title = getString(R.string.kmeans_cluster);
+        String ok = getString(R.string.ok);
+
+        View view = LayoutInflater.from(this).inflate(R.layout.input_dialog, null);
+        EditText etInput = (EditText) view.findViewById(R.id.et_input);
+
+        builder.setTitle(title)
+                .setView(view)
+                .setNegativeButton(ok, new ClusterOKListener(etInput, title, 1));
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
     }
 
     private void saveImage() {
@@ -654,6 +675,52 @@ public class ImageActivity extends AppCompatActivity {
 
             ivImg.setImageBitmap(image);
             tvTitle.setText(title);
+        }
+    }
+
+    private class ClusterOKListener implements DialogInterface.OnClickListener {
+
+        private EditText etInput;
+        private String title;
+
+        private int type;
+
+        private ClusterOKListener(EditText etInput, String title, int type) {
+            this.etInput = etInput;
+            this.title = title;
+            this.type = type;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            int numberOfCluster = Integer.valueOf(etInput.getText().toString());
+
+            if (numberOfCluster > 0) {
+                Bitmap img = StaticBitmap.image.copy(StaticBitmap.image.getConfig(), true);
+                ImageProcessing imageProcessing = new ImageProcessing();
+                ProgressDialog progressDialog = new ProgressDialog(ImageActivity.this);
+
+                String msg = getString(R.string.cluster_loading);
+
+                progressDialog.setMessage(msg);
+                progressDialog.show();
+
+                switch (type) {
+                    case 1:
+                        imageProcessing.getKMeansClusterImage(img, numberOfCluster);
+                        break;
+                }
+
+                ivImg.setImageBitmap(img);
+                tvTitle.setText(title);
+
+                progressDialog.dismiss();
+            } else {
+                String error = getString(R.string.cluster_error);
+                Toast.makeText(ImageActivity.this, error, Toast.LENGTH_LONG).show();
+
+                dialog.dismiss();
+            }
         }
     }
 }

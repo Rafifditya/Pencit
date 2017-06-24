@@ -14,13 +14,21 @@
     <string name="green_layer">Green Layer</string>
     <string name="blue_layer">Blue Layer</string>
     <string name="scrollable">Scrollable ?</string>
-    <string name="matching_dialog">Detect matching pattern...</string>
+    <string name="matching_dialog">Detect matching pattern&#8230;</string>
 
+    <string name="img_background">Image Background</string>
+    <string name="img_without_item">Image Without Item</string>
+    <string name="img_with_item">Image With Item</string>
+    <string name="img_levitation">Levitation Image</string>
+
+    <string name="levitation_info">Levitation Info</string>
     <string name="histogram">Histogram</string>
     <string name="cdf">CDF</string>
     <string name="matching">Matching</string>
     <string name="save">Save</string>
 
+    <string name="levitation">Levitation</string>
+    <string name="kmeans_cluster">K-Means Cluster</string>
     <string name="filter">Filter</string>
     <string name="enhance">Enhance</string>
 
@@ -33,6 +41,17 @@
 
     <string name="btn_check">Button Check</string>
     <string name="btn_close">Button Close</string>
+
+    <string name="cluster_hint">Input Numbers of Cluster&#8230;</string>
+    <string name="cluster_loading">Clustering Image&#8230;</string>
+    <string name="cluster_error">Number of Cluster Must Be More Than 0</string>
+
+    <string name="levitation_info_msg">
+        \t 1. \t Add img background \n
+        \t 2. \t Add img without item \n
+        \t 3. \t Add img with item \n
+        \t 4. \t Click proceed
+    </string>
 
     <string-array name="menu">
         <item>Flip</item>

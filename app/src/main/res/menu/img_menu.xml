@@ -4,13 +4,19 @@
 
     <item
         android:id="@+id/menu_histogram"
+        android:icon="@drawable/ic_chart"
         android:title="@string/histogram"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
     <!--<item-->
-        <!--android:id="@+id/menu_matching"-->
-        <!--android:title="@string/matching"-->
-        <!--app:showAsAction="never" />-->
+    <!--android:id="@+id/menu_matching"-->
+    <!--android:title="@string/matching"-->
+    <!--app:showAsAction="never" />-->
+
+    <item
+        android:id="@+id/menu_kmeans_cluster"
+        android:title="@string/kmeans_cluster"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_save"

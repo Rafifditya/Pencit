@@ -16,7 +16,7 @@
         android:maxWidth="@dimen/splash_icon_max_size"
         android:minHeight="@dimen/splash_icon_min_size"
         android:minWidth="@dimen/splash_icon_min_size"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/ic_android"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -1097,6 +1097,134 @@ public class ImageProcessing {
 //        return result;
     }
 
+    public void getLevitationImage(Bitmap imgBackground, Bitmap imgWithoutItem, Bitmap imgWithItem, Bitmap imgLevitation) {
+        int width = imgBackground.getWidth();
+        int height = imgBackground.getHeight();
+
+        Bitmap imgItem = Bitmap.createBitmap(width, height, imgBackground.getConfig());
+        imgLevitation = Bitmap.createBitmap(width, height, imgBackground.getConfig());
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int colorWithItem = imgWithItem.getPixel(i, j);
+                int colorWithoutItem = imgWithoutItem.getPixel(i, j);
+
+                int red = pixelNormalization(Color.red(colorWithItem) - Color.red(colorWithoutItem));
+                int green = pixelNormalization(Color.green(colorWithItem) - Color.green(colorWithoutItem));
+                int blue = pixelNormalization(Color.blue(colorWithItem) - Color.blue(colorWithoutItem));
+
+                int color = Color.rgb(red, green, blue);
+
+                imgItem.setPixel(i, j, color);
+            }
+        }
+
+        copyBitmap(imgItem, imgLevitation);
+    }
+
+    public void getKMeansClusterImage(Bitmap img, int numberOfCluster) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        int numberOfLayer = 3;
+        int numberOfColumn = (width * height) * numberOfLayer;
+
+        int[][] rgbModel = new int[numberOfLayer][numberOfColumn];
+        int[][] clusterColor = new int[numberOfCluster][numberOfLayer];
+        int[] cluster = new int[numberOfColumn];
+
+        int num = 0;
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int color = img.getPixel(i, j);
+
+                int red = Color.red(color);
+                int green = Color.green(color);
+                int blue = Color.blue(color);
+
+                rgbModel[0][num] = red;
+                rgbModel[1][num] = green;
+                rgbModel[2][num] = blue;
+
+                num++;
+            }
+        }
+
+        for (int i = 0; i < numberOfCluster; i++) {
+            for (int j = 0; j < numberOfLayer; j++)
+                clusterColor[i][j] = (int) Math.floor(Math.random() * 255);
+        }
+
+        for (int i = 0; i < numberOfColumn; i++) {
+            int[] diff = new int[numberOfCluster];
+
+            for (int j = 0; j < numberOfCluster; j++) {
+                int sum = 0;
+
+                for (int k = 0; k < numberOfLayer; k++)
+                    sum += Math.abs(clusterColor[j][k] - rgbModel[k][i]);
+
+                diff[j] = sum;
+            }
+
+            int min = diff[0];
+            int minIndex = 0;
+
+            for (int j = 0; j < numberOfCluster; j++) {
+                if (diff[j] <= min) {
+                    min = diff[j];
+                    minIndex = j;
+                }
+            }
+
+            cluster[i] = minIndex;
+        }
+
+        int[] sum = new int[numberOfCluster];
+
+        for (int i = 0; i < numberOfCluster; i++) {
+            for (int j = 0; j < numberOfLayer; j++)
+                clusterColor[i][j] = 0;
+
+            sum[i] = 0;
+        }
+
+        for (int i = 0; i < numberOfColumn; i++) {
+            int index = cluster[i];
+
+            for (int j = 0; j < numberOfLayer; j++)
+                clusterColor[index][j] += rgbModel[j][i];
+
+            sum[index] = sum[index] + 1;
+        }
+
+        for (int i = 0; i < numberOfCluster; i++) {
+            if (sum[i] != 0) {
+                for (int j = 0; j < numberOfLayer; j++)
+                    clusterColor[i][j] /= sum[i];
+            }
+        }
+
+        num = 0;
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int index = cluster[num];
+
+                int red = clusterColor[index][0];
+                int green = clusterColor[index][1];
+                int blue = clusterColor[index][2];
+
+                int color = Color.rgb(red, green, blue);
+
+                img.setPixel(i, j, color);
+
+                num++;
+            }
+        }
+    }
+
     private int pixelNormalization(int color) {
         if (color < 0)
             color = 0;
