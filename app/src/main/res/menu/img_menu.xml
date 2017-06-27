@@ -4,14 +4,18 @@
 
     <item
         android:id="@+id/menu_histogram"
-        android:icon="@drawable/ic_chart"
         android:title="@string/histogram"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <!--<item-->
     <!--android:id="@+id/menu_matching"-->
     <!--android:title="@string/matching"-->
     <!--app:showAsAction="never" />-->
+
+    <item
+        android:id="@+id/menu_detection_tomato_maturity"
+        android:title="@string/detection_tomato_maturity"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_kmeans_cluster"

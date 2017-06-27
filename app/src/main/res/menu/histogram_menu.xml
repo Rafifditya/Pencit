@@ -3,12 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_histogram"
-        android:title="@string/histogram"
+        android:id="@+id/menu_rgb_histogram"
+        android:title="@string/rgb_histogram"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_cdf"
-        android:title="@string/cdf"
+        android:id="@+id/menu_hsv_histogram"
+        android:title="@string/hsv_histogram"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_rgb_cdf"
+        android:title="@string/rgb_cdf"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_hsv_cdf"
+        android:title="@string/hsv_cdf"
         app:showAsAction="never" />
 </menu>

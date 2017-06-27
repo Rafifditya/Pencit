@@ -68,16 +68,16 @@
                 android:background="@color/colorPrimary" />
 
             <TextView
+                android:id="@+id/tv_layer_one"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="@string/red_layer"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="@color/colorPrimary" />
 
             <com.jjoe64.graphview.GraphView
-                android:id="@+id/gv_red"
+                android:id="@+id/gv_one"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/graph_height"
                 android:layout_marginBottom="@dimen/activity_2x_vertical_margin" />
@@ -89,15 +89,15 @@
                 android:background="@color/colorPrimary" />
 
             <TextView
+                android:id="@+id/tv_layer_two"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:text="@string/green_layer"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="@color/colorPrimary" />
 
             <com.jjoe64.graphview.GraphView
-                android:id="@+id/gv_green"
+                android:id="@+id/gv_two"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/graph_height"
                 android:layout_marginBottom="@dimen/activity_2x_vertical_margin" />
@@ -109,15 +109,15 @@
                 android:background="@color/colorPrimary" />
 
             <TextView
+                android:id="@+id/tv_layer_three"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:text="@string/blue_layer"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="@color/colorPrimary" />
 
             <com.jjoe64.graphview.GraphView
-                android:id="@+id/gv_blue"
+                android:id="@+id/gv_three"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/graph_height"
                 android:layout_marginBottom="@dimen/activity_2x_vertical_margin" />

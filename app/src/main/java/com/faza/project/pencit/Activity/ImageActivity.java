@@ -157,6 +157,9 @@ public class ImageActivity extends AppCompatActivity {
 //            case R.id.menu_matching:
 //                getMathingImage();
 //                return true;
+            case R.id.menu_detection_tomato_maturity:
+                detectionOfTomatoMaturity();
+                return true;
             case R.id.menu_kmeans_cluster:
                 setKMeansClusterDialog();
                 return true;
@@ -344,6 +347,44 @@ public class ImageActivity extends AppCompatActivity {
             return true;
     }
 
+    private void detectionOfTomatoMaturity() {
+        Bitmap img = StaticBitmap.image.copy(StaticBitmap.image.getConfig(), true);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String title = getString(R.string.detection_tomato_maturity);
+        String msg = getString(R.string.tomato_msg);
+        String ok = getString(R.string.ok);
+
+        int result = imageProcessing.detectionOfTomatoMaturity(this, img);
+
+        switch (result) {
+            case -1:
+                msg += " " + getString(R.string.immature);
+                break;
+            case 0:
+                msg += " " + getString(R.string.half_mature);
+                break;
+            case 1:
+                msg += " " + getString(R.string.mature);
+                break;
+        }
+
+        builder.setTitle(title)
+                .setMessage(msg)
+                .setNegativeButton(ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+
     private void setKMeansClusterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String title = getString(R.string.kmeans_cluster);
@@ -358,12 +399,12 @@ public class ImageActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
 
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 
     private void saveImage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        ImageProcessing imageProcessing = new ImageProcessing();
         String success = getString(R.string.success);
         String failed = getString(R.string.failed);
         String ok = getString(R.string.ok);
@@ -695,9 +736,8 @@ public class ImageActivity extends AppCompatActivity {
         public void onClick(DialogInterface dialog, int which) {
             int numberOfCluster = Integer.valueOf(etInput.getText().toString());
 
-            if (numberOfCluster > 0) {
+            if (numberOfCluster > 1) {
                 Bitmap img = StaticBitmap.image.copy(StaticBitmap.image.getConfig(), true);
-                ImageProcessing imageProcessing = new ImageProcessing();
                 ProgressDialog progressDialog = new ProgressDialog(ImageActivity.this);
 
                 String msg = getString(R.string.cluster_loading);

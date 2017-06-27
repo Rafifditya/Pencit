@@ -18,10 +18,11 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 public class HistogramActivity extends AppCompatActivity {
 
-    private int[] rgbL, rL, gL, bL;
-    private DataPoint[] rgbD, rD, gD, bD;
-    private GraphView gvImg, gvRed, gvGreen, gvBlue;
+    private int[] colorL, oneL, twoL, threeL;
+    private DataPoint[] colorD, oneD, twoD, threeD;
+    private GraphView gvImg, gvOne, gvTwo, gvThree;
     private ImageProcessing imageProcessing;
+    private TextView tvLayerOne, tvLayerTwo, tvLayerThree;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +45,15 @@ public class HistogramActivity extends AppCompatActivity {
         imageProcessing = new ImageProcessing();
 
         gvImg = (GraphView) findViewById(R.id.gv_img);
-        gvRed = (GraphView) findViewById(R.id.gv_red);
-        gvGreen = (GraphView) findViewById(R.id.gv_green);
-        gvBlue = (GraphView) findViewById(R.id.gv_blue);
+        gvOne = (GraphView) findViewById(R.id.gv_one);
+        gvTwo = (GraphView) findViewById(R.id.gv_two);
+        gvThree = (GraphView) findViewById(R.id.gv_three);
 
-        setHistogram();
+        tvLayerOne = (TextView) findViewById(R.id.tv_layer_one);
+        tvLayerTwo = (TextView) findViewById(R.id.tv_layer_two);
+        tvLayerThree = (TextView) findViewById(R.id.tv_layer_three);
+
+        setRGBHistogram();
     }
 
     @Override
@@ -67,56 +72,118 @@ public class HistogramActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.menu_histogram:
-                setHistogram();
+            case R.id.menu_rgb_histogram:
+                setRGBHistogram();
                 return true;
-            case R.id.menu_cdf:
-                setCDF();
+            case R.id.menu_hsv_histogram:
+                setHSVHistogram();
+                return true;
+            case R.id.menu_rgb_cdf:
+                setRGBCDF();
+                return true;
+            case R.id.menu_hsv_cdf:
+                setHSVCDF();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void arrayInitialization() {
-        rL = new int[256];
-        gL = new int[256];
-        bL = new int[256];
+    private void arrayInitialization(int type) {
+        switch (type) {
+            case 1: // rgb
+                oneL = new int[256];
+                twoL = new int[256];
+                threeL = new int[256];
+                break;
+            case 2: // hsv
+                oneL = new int[361];
+                twoL = new int[101];
+                threeL = new int[101];
+                break;
+        }
 
-        int rgbLength = (rL.length + gL.length + bL.length) + 1;
-        rgbL = new int[rgbLength];
+        int totalLength = (oneL.length + twoL.length + threeL.length) + 1;
+        colorL = new int[totalLength];
     }
 
-    private void setHistogram() {
-        arrayInitialization();
+    private void setGraphTitle(int type) {
+        String layerOne = null;
+        String layerTwo = null;
+        String layerThree = null;
 
-        imageProcessing.setHistogram(StaticBitmap.image, rL, gL, bL);
-        imageProcessing.setColorHistogram(rgbL, rL, gL, bL);
+        switch (type) {
+            case 1: // rgb
+                layerOne = "Layer " + getString(R.string.red);
+                layerTwo = "Layer " + getString(R.string.green);
+                layerThree = "Layer " + getString(R.string.blue);
+                break;
+            case 2: // hsv
+                layerOne = "Layer " + getString(R.string.hue);
+                layerTwo = "Layer " + getString(R.string.saturation);
+                layerThree = "Layer " + getString(R.string.value);
+                break;
+        }
+
+        tvLayerOne.setText(layerOne);
+        tvLayerTwo.setText(layerTwo);
+        tvLayerThree.setText(layerThree);
+    }
+
+    private void setRGBHistogram() {
+        arrayInitialization(1);
+        setGraphTitle(1);
+
+        imageProcessing.setRGBHistogram(StaticBitmap.image, oneL, twoL, threeL);
+        imageProcessing.setColorHistogram(colorL, oneL, twoL, threeL);
 
         setDataPoint();
         setGraph();
     }
 
-    private void setCDF() {
-        arrayInitialization();
+    private void setHSVHistogram() {
+        arrayInitialization(2);
+        setGraphTitle(2);
 
-        imageProcessing.setCDF(StaticBitmap.image, rL, gL, bL);
-        imageProcessing.setColorCDF(rgbL, rL, gL, bL);
+        imageProcessing.setHSVHistogram(StaticBitmap.image, oneL, twoL, threeL);
+        imageProcessing.setColorHistogram(colorL, oneL, twoL, threeL);
+
+        setDataPoint();
+        setGraph();
+    }
+
+    private void setRGBCDF() {
+        arrayInitialization(1);
+        setGraphTitle(1);
+
+        imageProcessing.setRGBCDF(StaticBitmap.image, oneL, twoL, threeL);
+        imageProcessing.setColorCDF(colorL, oneL, twoL, threeL);
+
+        setDataPoint();
+        setGraph();
+    }
+
+    private void setHSVCDF() {
+        arrayInitialization(2);
+        setGraphTitle(2);
+
+        imageProcessing.setHSVCDF(StaticBitmap.image, oneL, twoL, threeL);
+        imageProcessing.setColorCDF(colorL, oneL, twoL, threeL);
 
         setDataPoint();
         setGraph();
     }
 
     private void setDataPoint() {
-        rgbD = new DataPoint[rgbL.length];
-        rD = new DataPoint[rL.length];
-        gD = new DataPoint[gL.length];
-        bD = new DataPoint[bL.length];
+        colorD = new DataPoint[colorL.length];
+        oneD = new DataPoint[oneL.length];
+        twoD = new DataPoint[twoL.length];
+        threeD = new DataPoint[threeL.length];
 
-        saveDataPoint(rgbD, rgbL, rgbD.length);
-        saveDataPoint(rD, rL, rD.length);
-        saveDataPoint(gD, gL, gD.length);
-        saveDataPoint(bD, bL, bD.length);
+        saveDataPoint(colorD, colorL, colorD.length);
+        saveDataPoint(oneD, oneL, oneD.length);
+        saveDataPoint(twoD, twoL, twoD.length);
+        saveDataPoint(threeD, threeL, threeD.length);
     }
 
     private void saveDataPoint(DataPoint[] dataPoints, int[] points, int max) {
@@ -127,10 +194,10 @@ public class HistogramActivity extends AppCompatActivity {
     }
 
     private void setGraph() {
-        LineGraphSeries<DataPoint> rgbSeries = new LineGraphSeries<>(rgbD);
-        LineGraphSeries<DataPoint> redSeries = new LineGraphSeries<>(rD);
-        LineGraphSeries<DataPoint> greenSeries = new LineGraphSeries<>(gD);
-        LineGraphSeries<DataPoint> blueSeries = new LineGraphSeries<>(bD);
+        LineGraphSeries<DataPoint> rgbSeries = new LineGraphSeries<>(colorD);
+        LineGraphSeries<DataPoint> redSeries = new LineGraphSeries<>(oneD);
+        LineGraphSeries<DataPoint> greenSeries = new LineGraphSeries<>(twoD);
+        LineGraphSeries<DataPoint> blueSeries = new LineGraphSeries<>(threeD);
 
         rgbSeries.setColor(ContextCompat.getColor(HistogramActivity.this, R.color.colorAccent));
         redSeries.setColor(ContextCompat.getColor(HistogramActivity.this, R.color.colorRed));
@@ -139,33 +206,33 @@ public class HistogramActivity extends AppCompatActivity {
 
         gvImg.getViewport().setXAxisBoundsManual(true);
         gvImg.getViewport().setMinX(0);
-        gvImg.getViewport().setMaxX(rgbD.length);
+        gvImg.getViewport().setMaxX(colorD.length);
 
-        gvRed.getViewport().setXAxisBoundsManual(true);
-        gvRed.getViewport().setMinX(0);
-        gvRed.getViewport().setMaxX(rD.length);
+        gvOne.getViewport().setXAxisBoundsManual(true);
+        gvOne.getViewport().setMinX(0);
+        gvOne.getViewport().setMaxX(oneD.length);
 
-        gvGreen.getViewport().setXAxisBoundsManual(true);
-        gvGreen.getViewport().setMinX(0);
-        gvGreen.getViewport().setMaxX(gD.length);
+        gvTwo.getViewport().setXAxisBoundsManual(true);
+        gvTwo.getViewport().setMinX(0);
+        gvTwo.getViewport().setMaxX(twoD.length);
 
-        gvBlue.getViewport().setXAxisBoundsManual(true);
-        gvBlue.getViewport().setMinX(0);
-        gvBlue.getViewport().setMaxX(bD.length);
+        gvThree.getViewport().setXAxisBoundsManual(true);
+        gvThree.getViewport().setMinX(0);
+        gvThree.getViewport().setMaxX(threeD.length);
 
         gvImg.getViewport().setScalable(true);
-        gvRed.getViewport().setScalable(true);
-        gvGreen.getViewport().setScalable(true);
-        gvBlue.getViewport().setScalable(true);
+        gvOne.getViewport().setScalable(true);
+        gvTwo.getViewport().setScalable(true);
+        gvThree.getViewport().setScalable(true);
 
         gvImg.removeAllSeries();
-        gvRed.removeAllSeries();
-        gvGreen.removeAllSeries();
-        gvBlue.removeAllSeries();
+        gvOne.removeAllSeries();
+        gvTwo.removeAllSeries();
+        gvThree.removeAllSeries();
 
         gvImg.addSeries(rgbSeries);
-        gvRed.addSeries(redSeries);
-        gvGreen.addSeries(greenSeries);
-        gvBlue.addSeries(blueSeries);
+        gvOne.addSeries(redSeries);
+        gvTwo.addSeries(greenSeries);
+        gvThree.addSeries(blueSeries);
     }
 }

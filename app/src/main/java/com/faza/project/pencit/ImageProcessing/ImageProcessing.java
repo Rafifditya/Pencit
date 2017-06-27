@@ -1,10 +1,12 @@
 package com.faza.project.pencit.ImageProcessing;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import com.faza.project.pencit.Models.Point;
+import com.faza.project.pencit.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -426,7 +428,7 @@ public class ImageProcessing {
         int[] gL = new int[256];
         int[] bL = new int[256];
 
-        setCDF(img, rL, gL, bL);
+        setRGBCDF(img, rL, gL, bL);
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -1122,6 +1124,70 @@ public class ImageProcessing {
         copyBitmap(imgItem, imgLevitation);
     }
 
+    public int detectionOfTomatoMaturity(Activity activity, Bitmap img) {
+        int[] hue = new int[361];
+        int[] hue1 = new int[361];
+        int[] hue2 = new int[361];
+        int[] hue3 = new int[361];
+
+        int[] saturation = new int[101];
+        int[] value = new int[101];
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 3;
+
+        Bitmap tomato1 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.tomato_1, options);
+        Bitmap tomato2 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.tomato_2, options);
+        Bitmap tomato3 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.tomato_3, options);
+
+        setHSVHistogram(tomato1, hue1, saturation, value);
+        setHSVHistogram(tomato2, hue2, saturation, value);
+        setHSVHistogram(tomato3, hue3, saturation, value);
+        setHSVHistogram(img, hue, saturation, value);
+
+        int red = 0;
+        int green = 0;
+        int orange = 0;
+
+        for (int i = 0; i < hue.length; i++) {
+            int[] v = {
+                    hue1[i],
+                    hue2[i],
+                    hue3[i]
+            };
+
+            Arrays.sort(v);
+
+            hue[i] -= v[0];
+
+//            Log.d("Hue - " + i, hue[i] + "");
+        }
+
+        for (int i = 0; i <= 40; i++)
+            red += hue[i];
+
+        for (int i = 70; i <= 110; i++)
+            green += hue[i];
+
+        for (int i = 30; i <= 70; i++)
+            orange += hue[i];
+
+        int[] result = {
+                red,
+                green,
+                orange
+        };
+
+        Arrays.sort(result);
+
+        if (result[2] == red)
+            return 1;
+        else if (result[2] == green)
+            return -1;
+        else
+            return 0;
+    }
+
     public void getKMeansClusterImage(Bitmap img, int numberOfCluster) {
         int width = img.getWidth();
         int height = img.getHeight();
@@ -1398,7 +1464,7 @@ public class ImageProcessing {
         }
     }
 
-    public void setHistogram(Bitmap img, int[] rL, int[] gL, int[] bL) {
+    public void setRGBHistogram(Bitmap img, int[] rL, int[] gL, int[] bL) {
         int width = img.getWidth();
         int height = img.getHeight();
 
@@ -1417,38 +1483,79 @@ public class ImageProcessing {
         }
     }
 
-    public void setColorHistogram(int[] rgb, int[] rL, int[] gL, int[] bL) {
+    public void setColorHistogram(int[] color, int[] oneL, int[] twoL, int[] threeL) {
         int i = 0;
 
-        i = setColorHistogramArray(i, rgb, rL);
-        i = setColorHistogramArray(i, rgb, gL);
-        setColorHistogramArray(i, rgb, bL);
+        i = setColorHistogramArray(i, color, oneL);
+        i = setColorHistogramArray(i, color, twoL);
+        setColorHistogramArray(i, color, threeL);
     }
 
-    private int setColorHistogramArray(int i, int[] rgb, int[] color) {
-        int max = i + color.length;
-        int colorIndex;
+    private int setColorHistogramArray(int i, int[] colorAll, int[] color) {
+        int length = color.length;
+        int max = i + length;
+        int colorIndex = 0;
 
         for ( ; i < max; i++) {
-            colorIndex = i % 256;
-
-            rgb[i] = color[colorIndex];
+            colorAll[i] = color[colorIndex];
+            colorIndex++;
         }
 
         return i;
     }
 
-    public void setCDF(Bitmap img, int[] rL, int[] gL, int[] bL) {
-        setHistogram(img, rL, gL, bL);
+    public void setHSVHistogram(Bitmap img, int[] hL, int[] sL, int[] vL) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        float[] hsv = new float[3];
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int color = img.getPixel(i, j);
+
+                Color.colorToHSV(color, hsv);
+
+                int h = (int) hsv[0];
+                int s = (int) (hsv[1] * 100);
+                int v = (int) (hsv[2] * 100);
+
+//                Log.d("Hsv", h + " " + s + " " + v);
+
+                hL[h] += 1;
+                sL[s] += 1;
+                vL[v] += 1;
+            }
+        }
+    }
+
+    public void setRGBCDF(Bitmap img, int[] rL, int[] gL, int[] bL) {
+        setRGBHistogram(img, rL, gL, bL);
 
         int[] rLTotal = Arrays.copyOf(rL, rL.length);
         int[] gLTotal = Arrays.copyOf(gL, gL.length);
         int[] bLTotal = Arrays.copyOf(bL, bL.length);
 
-        for (int i = 1; i < 256; i++) {
+        for (int i = 1; i < rLTotal.length; i++) {
             rL[i] = rL[i - 1] + rLTotal[i];
             gL[i] = gL[i - 1] + gLTotal[i];
             bL[i] = bL[i - 1] + bLTotal[i];
+        }
+    }
+
+    public void setHSVCDF(Bitmap img, int[] hL, int[] sL, int[] vL) {
+        setHSVHistogram(img, hL, sL, vL);
+
+        int[] hLTotal = Arrays.copyOf(hL, hL.length);
+        int[] sLTotal = Arrays.copyOf(sL, sL.length);
+        int[] vLTotal = Arrays.copyOf(vL, vL.length);
+
+        for (int i = 1; i < hLTotal.length; i++)
+            hL[i] = hL[i - 1] + hLTotal[i];
+
+        for (int i = 1; i < sLTotal.length; i++) {
+            sL[i] = sL[i - 1] + sLTotal[i];
+            vL[i] = vL[i - 1] + vLTotal[i];
         }
     }
 
@@ -1461,16 +1568,16 @@ public class ImageProcessing {
     }
 
     private int setColorCDFArray(int i, int[] rgb, int[] color) {
-        int max = i + color.length;
-        int colorIndex;
+        int length = color.length;
+        int max = i + length;
+        int colorIndex = 0;
 
         if (i == 0)
             rgb[i] = color[i];
 
         for ( ; i < max; i++) {
-            colorIndex = i % 256;
-
             rgb[i + 1] = rgb[i] + color[colorIndex];
+            colorIndex++;
         }
 
         return i;
