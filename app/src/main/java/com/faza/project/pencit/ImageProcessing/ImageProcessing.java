@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 
 import com.faza.project.pencit.Models.Point;
 import com.faza.project.pencit.R;
@@ -255,6 +256,30 @@ public class ImageProcessing {
         }
     }
 
+    private void addBitmap(Bitmap one, Bitmap two, Bitmap result) {
+        int width = result.getWidth();
+        int height = result.getHeight();
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int colorOne = one.getPixel(i, j);
+                int colorTwo = two.getPixel(i, j);
+
+                int red = Color.red(colorOne) + Color.red(colorTwo);
+                int green = Color.green(colorOne) + Color.green(colorTwo);
+                int blue = Color.blue(colorOne) + Color.blue(colorTwo);
+
+                red = pixelNormalization(red);
+                green = pixelNormalization(green);
+                blue = pixelNormalization(blue);
+
+                int color = Color.rgb(red, green, blue);
+
+                result.setPixel(i, j, color);
+            }
+        }
+    }
+
     private void copyBitmap(Bitmap copy, Bitmap to) {
         int width = copy.getWidth();
         int height = copy.getHeight();
@@ -274,16 +299,12 @@ public class ImageProcessing {
         Bitmap imgFlip = Bitmap.createBitmap(width, height, img.getConfig());
 
         for (int i = 0; i < width; i++) {
-//            if (i % 3 == 0) {
                 for (int j = 0; j < height; j++) {
                     int backWidth = (width - 1) - i;
                     int backColor = img.getPixel(backWidth, j);
 
-//                    int backColor = img.getPixel(i, j);
-
                     imgFlip.setPixel(i, j, backColor);
                 }
-//            }
         }
 
         copyBitmap(imgFlip, img);
@@ -490,38 +511,55 @@ public class ImageProcessing {
         }
     }
 
-    private int getFilterColor3x3(int color1, double filter1, int color2, double filter2, int color3, double filter3, int color4, double filter4, int color, double filter, int color6, double filter6, int color7, double filter7, int color8, double filter8, int color9, double filter9) {
-        return (int) ((color1 * filter1) + (color2 * filter2) + (color3 * filter3) + (color4 * filter4) + (color * filter) + (color6 * filter6) + (color7 * filter7) + (color8 * filter8) + (color9 * filter9));
-    }
-
-    public void getFilterImage3x3(Bitmap img, double[] filter) {
+    public void getFilterImage2(Bitmap img, double[][] filter) {
         int width = img.getWidth();
         int height = img.getHeight();
+        int filterHeight = filter.length;
+        int filterWidth = filter[0].length;
 
         Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                int color1 = i != 0 && j != 0 ? img.getPixel(i - 1, j - 1) : 0;
-                int color2 = i != 0 ? img.getPixel(i - 1, j) : 0;
-                int color3 = i != 0 && j != (height - 1) ? img.getPixel(i - 1, j + 1) : 0;
-                int color4 = j != 0 ? img.getPixel(i, j - 1) : 0;
-                int color = img.getPixel(i, j);
-                int color6 = j != (height - 1) ? img.getPixel(i, j + 1) : 0;
-                int color7 = i != (width - 1) && j != 0 ? img.getPixel(i + 1, j - 1) : 0;
-                int color8 = i != (width - 1) ? img.getPixel(i + 1, j) : 0;
-                int color9 = i != (width - 1) && j != (height - 1) ? img.getPixel(i + 1, j + 1) : 0;
+                double filterValue;
+                int sizeHeight, sizeWidth, color;
+                int redSum = 0;
+                int blueSum = 0;
+                int greenSum = 0;
+                int centerHeight = (filterHeight / 2);
+                int centerWidth = (filterWidth / 2);
+                int row = 0;
 
-                int r = getFilterColor3x3(Color.red(color1), filter[1], Color.red(color2), filter[2], Color.red(color3), filter[3], Color.red(color4), filter[4], Color.red(color), filter[5], Color.red(color6), filter[6], Color.red(color7), filter[7], Color.red(color8), filter[8], Color.red(color9), filter[9]);
-                int g = getFilterColor3x3(Color.green(color1), filter[1], Color.green(color2), filter[2], Color.green(color3), filter[3], Color.green(color4), filter[4], Color.green(color), filter[5], Color.green(color6), filter[6], Color.green(color7), filter[7], Color.green(color8), filter[8], Color.green(color9), filter[9]);
-                int b = getFilterColor3x3(Color.blue(color1), filter[1], Color.blue(color2), filter[2], Color.blue(color3), filter[3], Color.blue(color4), filter[4], Color.blue(color), filter[5], Color.blue(color6), filter[6], Color.blue(color7), filter[7], Color.blue(color8), filter[8], Color.blue(color9), filter[9]);
+                sizeHeight = j - centerHeight;
 
-                r = pixelNormalization(r);
-                g = pixelNormalization(g);
-                b = pixelNormalization(b);
+                for (int k = sizeHeight; k < (sizeHeight + filterHeight); k++) {
+                    if (k >= 0 && k < height) {
+                        int column = 0;
 
-                color = Color.rgb(r, g, b);
+                        sizeWidth = i - centerWidth;
 
+                        for (int l = sizeWidth; l < (sizeWidth + filterWidth); l++) {
+                            if (l >= 0 && l < width) {
+                                color = img.getPixel(l, k);
+                                filterValue = filter[row][column];
+
+                                redSum += Color.red(color) * filterValue;
+                                greenSum += Color.green(color) * filterValue;
+                                blueSum += Color.blue(color) * filterValue;
+                            }
+
+                            column++;
+                        }
+                    }
+
+                    row++;
+                }
+
+                redSum = pixelNormalization(redSum);
+                greenSum = pixelNormalization(greenSum);
+                blueSum = pixelNormalization(blueSum);
+
+                color = Color.rgb(redSum, greenSum, blueSum);
                 imgFilter.setPixel(i, j, color);
             }
         }
@@ -530,73 +568,27 @@ public class ImageProcessing {
     }
 
     public void getMeanFilterImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        double[][] kernel = new double[3][3];
 
-        Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color1 = i != 0 && j != 0 ? img.getPixel(i - 1, j - 1) : 0;
-                int color2 = i != 0 ? img.getPixel(i - 1, j) : 0;
-                int color3 = i != 0 && j != (height - 1) ? img.getPixel(i - 1, j + 1) : 0;
-                int color4 = j != 0 ? img.getPixel(i, j - 1) : 0;
-                int color = img.getPixel(i, j);
-                int color6 = j != (height - 1) ? img.getPixel(i, j + 1) : 0;
-                int color7 = i != (width - 1) && j != 0 ? img.getPixel(i + 1, j - 1) : 0;
-                int color8 = i != (width - 1) ? img.getPixel(i + 1, j) : 0;
-                int color9 = i != (width - 1) && j != (height - 1) ? img.getPixel(i + 1, j + 1) : 0;
-
-                int r = (Color.red(color1) + Color.red(color2) + Color.red(color3) + Color.red(color4) + Color.red(color) + Color.red(color6) + Color.red(color7) + Color.red(color8) + Color.red(color9)) / 9;
-                int g = (Color.green(color1) + Color.green(color2) + Color.green(color3) + Color.green(color4) + Color.green(color) + Color.green(color6) + Color.green(color7) + Color.green(color8) + Color.green(color9)) / 9;
-                int b = (Color.blue(color1) + Color.blue(color2) + Color.blue(color3) + Color.blue(color4) + Color.blue(color) + Color.blue(color6) + Color.blue(color7) + Color.blue(color8) + Color.blue(color9)) / 9;
-
-                r = pixelNormalization(r);
-                g = pixelNormalization(g);
-                b = pixelNormalization(b);
-
-                color = Color.rgb(r, g, b);
-
-                imgFilter.setPixel(i, j, color);
+        for (int i = 0; i < kernel.length; i++) {
+            for (int j = 0; j < kernel[i].length; j++) {
+                kernel[i][j] = 1.0 / 9.0;
             }
         }
 
-        copyBitmap(imgFilter, img);
+        getFilterImage2(img, kernel);
     }
 
     public void getGaussianFilterImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        double[][] kernel = new double[3][3];
 
-        Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
-
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color1 = i != 0 && j != 0 ? img.getPixel(i - 1, j - 1) : 0;
-                int color2 = i != 0 ? img.getPixel(i - 1, j) : 0;
-                int color3 = i != 0 && j != (height - 1) ? img.getPixel(i - 1, j + 1) : 0;
-                int color4 = j != 0 ? img.getPixel(i, j - 1) : 0;
-                int color = img.getPixel(i, j);
-                int color6 = j != (height - 1) ? img.getPixel(i, j + 1) : 0;
-                int color7 = i != (width - 1) && j != 0 ? img.getPixel(i + 1, j - 1) : 0;
-                int color8 = i != (width - 1) ? img.getPixel(i + 1, j) : 0;
-                int color9 = i != (width - 1) && j != (height - 1) ? img.getPixel(i + 1, j + 1) : 0;
-
-                int r = (Color.red(color1) + Color.red(color2) + Color.red(color3) + Color.red(color4) + Color.red(color) + Color.red(color6) + Color.red(color7) + Color.red(color8) + Color.red(color9)) / 13;
-                int g = (Color.green(color1) + Color.green(color2) + Color.green(color3) + Color.green(color4) + Color.green(color) + Color.green(color6) + Color.green(color7) + Color.green(color8) + Color.green(color9)) / 13;
-                int b = (Color.blue(color1) + Color.blue(color2) + Color.blue(color3) + Color.blue(color4) + Color.blue(color) + Color.blue(color6) + Color.blue(color7) + Color.blue(color8) + Color.blue(color9)) / 13;
-
-                r = pixelNormalization(r);
-                g = pixelNormalization(g);
-                b = pixelNormalization(b);
-
-                color = Color.rgb(r, g, b);
-
-                imgFilter.setPixel(i, j, color);
+        for (int i = 0; i < kernel.length; i++) {
+            for (int j = 0; j < kernel[i].length; j++) {
+                kernel[i][j] = 1.0 / 13.0;
             }
         }
 
-        copyBitmap(imgFilter, img);
+        getFilterImage2(img, kernel);
     }
 
     private int getMedian(int[] color) {
@@ -682,174 +674,125 @@ public class ImageProcessing {
     }
 
     public void getRobertImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        double[][] kernel = new double[2][2];
 
-        getGrayAutoLevelImage(img);
+        kernel[0][0] = -1;
+        kernel[0][1] = 1;
 
-        Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
+        kernel[1][0] = -1;
+        kernel[1][1] = 1;
 
-        for (int i = 0; i < width ; i++) {
-            for (int j = 0; j < height; j++) {
-                int color1 = i != 0 ? img.getPixel(i - 1, j) : 0;
-                int color = img.getPixel(i, j);
-                int color3 = j != 0 ? img.getPixel(i, j - 1) : 0;
-
-                int gray = (Color.red(color) - Color.red(color1)) + (Color.red(color) - Color.red(color3));
-                gray = minusPixelNormalization(gray);
-
-                color = Color.rgb(gray, gray, gray);
-
-                imgFilter.setPixel(i, j, color);
-            }
-        }
-
-        copyBitmap(imgFilter, img);
+        getFilterImage2(img, kernel);
     }
 
     public void getHorizontalRobertImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        double[][] kernel = new double[1][1];
 
-        getGrayAutoLevelImage(img);
+        kernel[0][0] = -1;
+        kernel[1][0] = 1;
 
-        Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
-
-        for (int i = 0; i < width ; i++) {
-            for (int j = 0; j < height; j++) {
-                int color1 = i != 0 ? img.getPixel(i - 1, j) : 0;
-                int color = img.getPixel(i, j);
-
-                int gray = Color.red(color) - Color.red(color1);
-                gray = minusPixelNormalization(gray);
-
-                color = Color.rgb(gray, gray, gray);
-
-                imgFilter.setPixel(i, j, color);
-            }
-        }
-
-        copyBitmap(imgFilter, img);
+        getFilterImage2(img, kernel);
     }
 
     public void getVerticalRobertImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        double[][] kernel = new double[1][1];
 
-        getGrayAutoLevelImage(img);
+        kernel[0][0] = -1;
+        kernel[1][0] = 1;
 
-        Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
-
-        for (int i = 0; i < width ; i++) {
-            for (int j = 0; j < height; j++) {
-                int color = img.getPixel(i, j);
-                int color3 = j != 0 ? img.getPixel(i, j - 1) : 0;
-
-                int gray = Color.red(color) - Color.red(color3);
-                gray = minusPixelNormalization(gray);
-
-                color = Color.rgb(gray, gray, gray);
-
-                imgFilter.setPixel(i, j, color);
-            }
-        }
-
-        copyBitmap(imgFilter, img);
+        getFilterImage2(img, kernel);
     }
 
     public void getPrewitImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        Bitmap imgHorizontal = img.copy(img.getConfig(), true);
+        Bitmap imgVertical = img.copy(img.getConfig(), true);
 
-        getGrayAutoLevelImage(img);
+        double[][] kernelHorizontal = new double[3][3];
+        double[][] kernelVertical = new double[3][3];
 
-        Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
+        kernelHorizontal[0][0] = -1;
+        kernelHorizontal[0][1] = 0;
+        kernelHorizontal[0][2] = 1;
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color1 = i != 0 && j != 0 ? img.getPixel(i - 1, j - 1) : 0;
-                int color2 = i != 0 ? img.getPixel(i - 1, j) : 0;
-                int color3 = i != 0 && j != (height - 1) ? img.getPixel(i - 1, j + 1) : 0;
-                int color4 = j != 0 ? img.getPixel(i, j - 1) : 0;
-                int color6 = j != (height - 1) ? img.getPixel(i, j + 1) : 0;
-                int color7 = i != (width - 1) && j != 0 ? img.getPixel(i + 1, j - 1) : 0;
-                int color8 = i != (width - 1) ? img.getPixel(i + 1, j) : 0;
-                int color9 = i != (width - 1) && j != (height - 1) ? img.getPixel(i + 1, j + 1) : 0;
+        kernelHorizontal[1][0] = -1;
+        kernelHorizontal[1][1] = 0;
+        kernelHorizontal[1][2] = 1;
 
-                int gray = (Color.red(color3) + Color.red(color6) + Color.red(color9) - Color.red(color1) - Color.red(color4) - Color.red(color7)) + (Color.red(color7) + Color.red(color8) + Color.red(color9) - Color.red(color1) - Color.red(color2) - Color.red(color3));
-                gray = minusPixelNormalization(gray);
+        kernelHorizontal[2][0] = -1;
+        kernelHorizontal[2][1] = 0;
+        kernelHorizontal[2][2] = 1;
 
-                int color = Color.rgb(gray, gray, gray);
+        kernelVertical[0][0] = -1;
+        kernelVertical[0][1] = -1;
+        kernelVertical[0][2] = -1;
 
-                imgFilter.setPixel(i, j, color);
-            }
-        }
+        kernelVertical[1][0] = 0;
+        kernelVertical[1][1] = 0;
+        kernelVertical[1][2] = 0;
 
-        copyBitmap(imgFilter, img);
+        kernelVertical[2][0] = 1;
+        kernelVertical[2][1] = 1;
+        kernelVertical[2][2] = 1;
+
+        getFilterImage2(imgHorizontal, kernelHorizontal);
+        getFilterImage2(imgVertical, kernelVertical);
+
+        addBitmap(imgHorizontal, imgVertical, img);
     }
 
     public void getSobelImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        Bitmap imgHorizontal = img.copy(img.getConfig(), true);
+        Bitmap imgVertical = img.copy(img.getConfig(), true);
 
-        getGrayAutoLevelImage(img);
+        double[][] kernelHorizontal = new double[3][3];
+        double[][] kernelVertical = new double[3][3];
 
-        Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
+        kernelHorizontal[0][0] = -1;
+        kernelHorizontal[0][1] = 0;
+        kernelHorizontal[0][2] = 1;
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color1 = i != 0 && j != 0 ? img.getPixel(i - 1, j - 1) : 0;
-                int color2 = i != 0 ? img.getPixel(i - 1, j) : 0;
-                int color3 = i != 0 && j != (height - 1) ? img.getPixel(i - 1, j + 1) : 0;
-                int color4 = j != 0 ? img.getPixel(i, j - 1) : 0;
-                int color6 = j != (height - 1) ? img.getPixel(i, j + 1) : 0;
-                int color7 = i != (width - 1) && j != 0 ? img.getPixel(i + 1, j - 1) : 0;
-                int color8 = i != (width - 1) ? img.getPixel(i + 1, j) : 0;
-                int color9 = i != (width - 1) && j != (height - 1) ? img.getPixel(i + 1, j + 1) : 0;
+        kernelHorizontal[1][0] = -2;
+        kernelHorizontal[1][1] = 0;
+        kernelHorizontal[1][2] = 2;
 
-                int gray = (Color.red(color3) + (2 * Color.red(color6)) + Color.red(color9) - Color.red(color1) - (2 * Color.red(color4)) - Color.red(color7)) + (Color.red(color7) + (2 * Color.red(color8)) + Color.red(color9) - Color.red(color1) - (2 * Color.red(color2)) - Color.red(color3));
-                gray = minusPixelNormalization(gray);
+        kernelHorizontal[2][0] = -1;
+        kernelHorizontal[2][1] = 0;
+        kernelHorizontal[2][2] = 1;
 
-                int color = Color.rgb(gray, gray, gray);
+        kernelVertical[0][0] = -1;
+        kernelVertical[0][1] = -2;
+        kernelVertical[0][2] = -1;
 
-                imgFilter.setPixel(i, j, color);
-            }
-        }
+        kernelVertical[1][0] = 0;
+        kernelVertical[1][1] = 0;
+        kernelVertical[1][2] = 0;
 
-        copyBitmap(imgFilter, img);
+        kernelVertical[2][0] = 1;
+        kernelVertical[2][1] = 2;
+        kernelVertical[2][2] = 1;
+
+        getFilterImage2(imgHorizontal, kernelHorizontal);
+        getFilterImage2(imgVertical, kernelVertical);
+
+        addBitmap(imgHorizontal, imgVertical, img);
     }
 
     public void getLaplacianImage(Bitmap img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
+        double[][] kernel = new double[3][3];
 
-        getGrayAutoLevelImage(img);
+        kernel[0][0] = 1;
+        kernel[0][1] = -2;
+        kernel[0][2] = 1;
 
-        Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
+        kernel[1][0] = -2;
+        kernel[1][1] = 4;
+        kernel[1][2] = -2;
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int color1 = i != 0 && j != 0 ? img.getPixel(i - 1, j - 1) : 0;
-                int color2 = i != 0 ? img.getPixel(i - 1, j) : 0;
-                int color3 = i != 0 && j != (height - 1) ? img.getPixel(i - 1, j + 1) : 0;
-                int color4 = j != 0 ? img.getPixel(i, j - 1) : 0;
-                int color = img.getPixel(i, j);
-                int color6 = j != (height - 1) ? img.getPixel(i, j + 1) : 0;
-                int color7 = i != (width - 1) && j != 0 ? img.getPixel(i + 1, j - 1) : 0;
-                int color8 = i != (width - 1) ? img.getPixel(i + 1, j) : 0;
-                int color9 = i != (width - 1) && j != (height - 1) ? img.getPixel(i + 1, j + 1) : 0;
+        kernel[2][0] = 1;
+        kernel[2][1] = -2;
+        kernel[2][2] = 1;
 
-//                int gray = Color.red(color1) - (2 * Color.red(color2)) + Color.red(color3) - (2 * Color.red(color4)) + (4 * Color.red(color)) - (2 * Color.red(color6)) + Color.red(color7) - (2 * Color.red(color8)) + Color.red(color9);
-                int gray = (8 * Color.red(color)) - Color.red(color1) - Color.red(color2) - Color.red(color3) - Color.red(color4) - Color.red(color6) - Color.red(color7) -  Color.red(color8) - Color.red(color9);
-                gray = minusPixelNormalization(gray);
-
-                color = Color.rgb(gray, gray, gray);
-
-                imgFilter.setPixel(i, j, color);
-            }
-        }
-
-        copyBitmap(imgFilter, img);
+        getFilterImage2(img, kernel);
     }
 
     private int getA(Bitmap img, int i, int j) {
@@ -921,8 +864,8 @@ public class ImageProcessing {
         do {
             hasChange = false;
 
-            for (int i = 1; (i + 1) < width; i++) {
-                for (int j = 1; (j + 1) < height; j++) {
+            for (int i = 1; (i + 2) < width; i++) {
+                for (int j = 1; (j + 2) < height; j++) {
                     a = getA(img, i, j);
                     b = getB(img, i, j);
 
@@ -959,8 +902,8 @@ public class ImageProcessing {
         do {
             hasChange = false;
 
-            for (int i = 1; i + 1 < width; i++) {
-                for (int j = 1; j + 1 < height; j++) {
+            for (int i = 1; (i + 1) < width; i++) {
+                for (int j = 1; (j + 1) < height; j++) {
                     a = getA(img, i, j);
                     b = getB(img, i, j);
 
@@ -987,8 +930,8 @@ public class ImageProcessing {
 
             pointsToChange.clear();
 
-            for (int i = 1; i + 1 < width; i++) {
-                for (int j = 1; j + 1 < height; j++) {
+            for (int i = 1; (i + 1) < width; i++) {
+                for (int j = 1; (j + 1) < height; j++) {
                     a = getA(img, i, j);
                     b = getB(img, i, j);
 
@@ -1023,7 +966,197 @@ public class ImageProcessing {
     }
 
     public void getSketchImage(Bitmap img) {
+        Bitmap imgHorizontal = img.copy(img.getConfig(), true);
+        Bitmap imgVertical = img.copy(img.getConfig(), true);
 
+        double[][] kernelHorizontal = new double[9][9];
+        double[][] kernelVertical = new double[9][9];
+
+        kernelHorizontal[0][0] = -1;
+        kernelHorizontal[0][1] = 0;
+        kernelHorizontal[0][2] = 0;
+        kernelHorizontal[0][3] = 0;
+        kernelHorizontal[0][4] = 0;
+        kernelHorizontal[0][5] = 0;
+        kernelHorizontal[0][6] = 0;
+        kernelHorizontal[0][7] = 0;
+        kernelHorizontal[0][8] = 1;
+
+        kernelHorizontal[1][0] = -2;
+        kernelHorizontal[1][1] = 0;
+        kernelHorizontal[1][2] = 0;
+        kernelHorizontal[1][3] = 0;
+        kernelHorizontal[1][4] = 0;
+        kernelHorizontal[1][5] = 0;
+        kernelHorizontal[1][6] = 0;
+        kernelHorizontal[1][7] = 0;
+        kernelHorizontal[1][8] = 2;
+
+        kernelHorizontal[2][0] = -3;
+        kernelHorizontal[2][1] = 0;
+        kernelHorizontal[2][2] = 0;
+        kernelHorizontal[2][3] = 0;
+        kernelHorizontal[2][4] = 0;
+        kernelHorizontal[2][5] = 0;
+        kernelHorizontal[2][6] = 0;
+        kernelHorizontal[2][7] = 0;
+        kernelHorizontal[2][8] = 3;
+
+        kernelHorizontal[3][0] = -4;
+        kernelHorizontal[3][1] = 0;
+        kernelHorizontal[3][2] = 0;
+        kernelHorizontal[3][3] = 0;
+        kernelHorizontal[3][4] = 0;
+        kernelHorizontal[3][5] = 0;
+        kernelHorizontal[3][6] = 0;
+        kernelHorizontal[3][7] = 0;
+        kernelHorizontal[3][8] = 4;
+
+        kernelHorizontal[4][0] = -5;
+        kernelHorizontal[4][1] = 0;
+        kernelHorizontal[4][2] = 0;
+        kernelHorizontal[4][3] = 0;
+        kernelHorizontal[4][4] = 0;
+        kernelHorizontal[4][5] = 0;
+        kernelHorizontal[4][6] = 0;
+        kernelHorizontal[4][7] = 0;
+        kernelHorizontal[4][8] = 5;
+
+        kernelHorizontal[5][0] = -4;
+        kernelHorizontal[5][1] = 0;
+        kernelHorizontal[5][2] = 0;
+        kernelHorizontal[5][3] = 0;
+        kernelHorizontal[5][4] = 0;
+        kernelHorizontal[5][5] = 0;
+        kernelHorizontal[5][6] = 0;
+        kernelHorizontal[5][7] = 0;
+        kernelHorizontal[5][8] = 4;
+
+        kernelHorizontal[6][0] = -3;
+        kernelHorizontal[6][1] = 0;
+        kernelHorizontal[6][2] = 0;
+        kernelHorizontal[6][3] = 0;
+        kernelHorizontal[6][4] = 0;
+        kernelHorizontal[6][5] = 0;
+        kernelHorizontal[6][6] = 0;
+        kernelHorizontal[6][7] = 0;
+        kernelHorizontal[6][8] = 3;
+
+        kernelHorizontal[7][0] = -2;
+        kernelHorizontal[7][1] = 0;
+        kernelHorizontal[7][2] = 0;
+        kernelHorizontal[7][3] = 0;
+        kernelHorizontal[7][4] = 0;
+        kernelHorizontal[7][5] = 0;
+        kernelHorizontal[7][6] = 0;
+        kernelHorizontal[7][7] = 0;
+        kernelHorizontal[7][8] = 2;
+
+        kernelHorizontal[8][0] = -1;
+        kernelHorizontal[8][1] = 0;
+        kernelHorizontal[8][2] = 0;
+        kernelHorizontal[8][3] = 0;
+        kernelHorizontal[8][4] = 0;
+        kernelHorizontal[8][5] = 0;
+        kernelHorizontal[8][6] = 0;
+        kernelHorizontal[8][7] = 0;
+        kernelHorizontal[8][8] = 1;
+
+        kernelVertical[0][0] = -1;
+        kernelVertical[0][1] = -2;
+        kernelVertical[0][2] = -3;
+        kernelVertical[0][3] = -4;
+        kernelVertical[0][4] = -5;
+        kernelVertical[0][5] = -4;
+        kernelVertical[0][6] = -3;
+        kernelVertical[0][7] = -2;
+        kernelVertical[0][8] = -1;
+
+        kernelVertical[1][0] = 0;
+        kernelVertical[1][1] = 0;
+        kernelVertical[1][2] = 0;
+        kernelVertical[1][3] = 0;
+        kernelVertical[1][4] = 0;
+        kernelVertical[1][5] = 0;
+        kernelVertical[1][6] = 0;
+        kernelVertical[1][7] = 0;
+        kernelVertical[1][8] = 0;
+
+        kernelVertical[2][0] = 0;
+        kernelVertical[2][1] = 0;
+        kernelVertical[2][2] = 0;
+        kernelVertical[2][3] = 0;
+        kernelVertical[2][4] = 0;
+        kernelVertical[2][5] = 0;
+        kernelVertical[2][6] = 0;
+        kernelVertical[2][7] = 0;
+        kernelVertical[2][8] = 0;
+
+        kernelVertical[3][0] = 0;
+        kernelVertical[3][1] = 0;
+        kernelVertical[3][2] = 0;
+        kernelVertical[3][3] = 0;
+        kernelVertical[3][4] = 0;
+        kernelVertical[3][5] = 0;
+        kernelVertical[3][6] = 0;
+        kernelVertical[3][7] = 0;
+        kernelVertical[3][8] = 0;
+
+        kernelVertical[4][0] = 0;
+        kernelVertical[4][1] = 0;
+        kernelVertical[4][2] = 0;
+        kernelVertical[4][3] = 0;
+        kernelVertical[4][4] = 0;
+        kernelVertical[4][5] = 0;
+        kernelVertical[4][6] = 0;
+        kernelVertical[4][7] = 0;
+        kernelVertical[4][8] = 0;
+
+        kernelVertical[5][0] = 0;
+        kernelVertical[5][1] = 0;
+        kernelVertical[5][2] = 0;
+        kernelVertical[5][3] = 0;
+        kernelVertical[5][4] = 0;
+        kernelVertical[5][5] = 0;
+        kernelVertical[5][6] = 0;
+        kernelVertical[5][7] = 0;
+        kernelVertical[5][8] = 0;
+
+        kernelVertical[6][0] = 0;
+        kernelVertical[6][1] = 0;
+        kernelVertical[6][2] = 0;
+        kernelVertical[6][3] = 0;
+        kernelVertical[6][4] = 0;
+        kernelVertical[6][5] = 0;
+        kernelVertical[6][6] = 0;
+        kernelVertical[6][7] = 0;
+        kernelVertical[6][8] = 0;
+
+        kernelVertical[7][0] = 0;
+        kernelVertical[7][1] = 0;
+        kernelVertical[7][2] = 0;
+        kernelVertical[7][3] = 0;
+        kernelVertical[7][4] = 0;
+        kernelVertical[7][5] = 0;
+        kernelVertical[7][6] = 0;
+        kernelVertical[7][7] = 0;
+        kernelVertical[7][8] = 0;
+
+        kernelVertical[8][0] = 1;
+        kernelVertical[8][1] = 2;
+        kernelVertical[8][2] = 3;
+        kernelVertical[8][3] = 4;
+        kernelVertical[8][4] = 5;
+        kernelVertical[8][5] = 4;
+        kernelVertical[8][6] = 3;
+        kernelVertical[8][7] = 2;
+        kernelVertical[8][8] = 1;
+
+        getFilterImage2(imgHorizontal, kernelHorizontal);
+        getFilterImage2(imgVertical, kernelVertical);
+
+        addBitmap(imgHorizontal, imgVertical, img);
+        getInvertImg(img);
     }
 
     public void getNumPatternMatching(Bitmap img, Bitmap imgTemplate) {
@@ -1103,25 +1236,29 @@ public class ImageProcessing {
         int width = imgBackground.getWidth();
         int height = imgBackground.getHeight();
 
-        Bitmap imgItem = Bitmap.createBitmap(width, height, imgBackground.getConfig());
-        imgLevitation = Bitmap.createBitmap(width, height, imgBackground.getConfig());
-
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
+                int colorBackground = imgBackground.getPixel(i, j);
                 int colorWithItem = imgWithItem.getPixel(i, j);
                 int colorWithoutItem = imgWithoutItem.getPixel(i, j);
 
-                int red = pixelNormalization(Color.red(colorWithItem) - Color.red(colorWithoutItem));
-                int green = pixelNormalization(Color.green(colorWithItem) - Color.green(colorWithoutItem));
-                int blue = pixelNormalization(Color.blue(colorWithItem) - Color.blue(colorWithoutItem));
+                int red = (Color.red(colorWithItem) - Color.red(colorWithoutItem));
+                int green = (Color.green(colorWithItem) - Color.green(colorWithoutItem));
+                int blue = (Color.blue(colorWithItem) - Color.blue(colorWithoutItem));
+
+                red = pixelNormalization(red);
+                green = pixelNormalization(green);
+                blue = pixelNormalization(blue);
+
+                red += Color.red(colorBackground);
+                green += Color.green(colorBackground);
+                blue += Color.blue(colorBackground);
 
                 int color = Color.rgb(red, green, blue);
 
-                imgItem.setPixel(i, j, color);
+                imgLevitation.setPixel(i, j, color);
             }
         }
-
-        copyBitmap(imgItem, imgLevitation);
     }
 
     public int detectionOfTomatoMaturity(Activity activity, Bitmap img) {

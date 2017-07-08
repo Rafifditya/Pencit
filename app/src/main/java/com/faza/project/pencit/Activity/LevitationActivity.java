@@ -266,6 +266,8 @@ public class LevitationActivity extends AppCompatActivity {
 
                 Toast.makeText(LevitationActivity.this, "Cannot proceed image...", Toast.LENGTH_LONG).show();
             } else {
+                imgLevitation = Bitmap.createBitmap(imgBackground.getWidth(), imgBackground.getHeight(), imgBackground.getConfig());
+
                 imageProcessing.getLevitationImage(imgBackground, imgWithoutItem, imgWithItem, imgLevitation);
                 ivImgLevitation.setImageBitmap(imgLevitation);
             }
