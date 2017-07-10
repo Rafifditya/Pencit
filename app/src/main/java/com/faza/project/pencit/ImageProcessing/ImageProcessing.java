@@ -567,6 +567,61 @@ public class ImageProcessing {
         copyBitmap(imgFilter, img);
     }
 
+    public void getFilterImage2(Bitmap img, Bitmap filter) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        int filterHeight = filter.getHeight();
+        int filterWidth = filter.getWidth();
+
+        Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int sizeHeight, sizeWidth, color, filterColor;
+                int redSum = 0;
+                int blueSum = 0;
+                int greenSum = 0;
+                int centerHeight = (filterHeight / 2);
+                int centerWidth = (filterWidth / 2);
+                int row = 0;
+
+                sizeHeight = j - centerHeight;
+
+                for (int k = sizeHeight; k < (sizeHeight + filterHeight); k++) {
+                    if (k >= 0 && k < height) {
+                        int column = 0;
+
+                        sizeWidth = i - centerWidth;
+
+                        for (int l = sizeWidth; l < (sizeWidth + filterWidth); l++) {
+                            if (l >= 0 && l < width) {
+                                color = img.getPixel(l, k);
+                                filterColor = filter.getPixel(column, row);
+
+                                redSum += Color.red(color) * Color.red(filterColor);
+                                greenSum += Color.green(color) * Color.green(filterColor);
+                                blueSum += Color.blue(color) * Color.blue(filterColor);
+                            }
+
+                            column++;
+                        }
+                    }
+
+                    row++;
+                }
+
+                redSum = pixelNormalization(redSum);
+                greenSum = pixelNormalization(greenSum);
+                blueSum = pixelNormalization(blueSum);
+
+                color = Color.rgb(redSum, greenSum, blueSum);
+                imgFilter.setPixel(i, j, color);
+            }
+        }
+
+        copyBitmap(imgFilter, img);
+    }
+
     public void getMeanFilterImage(Bitmap img) {
         double[][] kernel = new double[3][3];
 
@@ -608,57 +663,43 @@ public class ImageProcessing {
         return color[5];
     }
 
-    public void getMedianFilterImage(Bitmap img) {
+    public void getMedianFilterImage(Bitmap img, int kernelHeight, int kernelWidth) {
         int width = img.getWidth();
         int height = img.getHeight();
+        int arraySize = kernelHeight * kernelWidth;
 
-        int[] rA = new int[10];
-        int[] gA = new int[10];
-        int[] bA = new int[10];
+        int[] rA = new int[arraySize];
+        int[] gA = new int[arraySize];
+        int[] bA = new int[arraySize];
 
         Bitmap imgFilter = Bitmap.createBitmap(width, height, img.getConfig());
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                int color1 = i != 0 && j != 0 ? img.getPixel(i - 1, j - 1) : 0;
-                int color2 = i != 0 ? img.getPixel(i - 1, j) : 0;
-                int color3 = i != 0 && j != (height - 1) ? img.getPixel(i - 1, j + 1) : 0;
-                int color4 = j != 0 ? img.getPixel(i, j - 1) : 0;
-                int color = img.getPixel(i, j);
-                int color6 = j != (height - 1) ? img.getPixel(i, j + 1) : 0;
-                int color7 = i != (width - 1) && j != 0 ? img.getPixel(i + 1, j - 1) : 0;
-                int color8 = i != (width - 1) ? img.getPixel(i + 1, j) : 0;
-                int color9 = i != (width - 1) && j != (height - 1) ? img.getPixel(i + 1, j + 1) : 0;
+                int sizeHeight, sizeWidth, color;
+                int centerHeight = (kernelHeight / 2);
+                int centerWidth = (kernelWidth / 2);
+                int array = 0;
 
-                rA[1] = Color.red(color1);
-                rA[2] = Color.red(color2);
-                rA[3] = Color.red(color3);
-                rA[4] = Color.red(color4);
-                rA[5] = Color.red(color);
-                rA[6] = Color.red(color6);
-                rA[7] = Color.red(color7);
-                rA[8] = Color.red(color8);
-                rA[9] = Color.red(color9);
+                sizeHeight = j - centerHeight;
 
-                gA[1] = Color.green(color1);
-                gA[2] = Color.green(color2);
-                gA[3] = Color.green(color3);
-                gA[4] = Color.green(color4);
-                gA[5] = Color.green(color);
-                gA[6] = Color.green(color6);
-                gA[7] = Color.green(color7);
-                gA[8] = Color.green(color8);
-                gA[9] = Color.green(color9);
+                for (int k = sizeHeight; k < (sizeHeight + kernelHeight); k++) {
+                    if (k >= 0 && k < height) {
+                        sizeWidth = i - centerWidth;
 
-                bA[1] = Color.blue(color1);
-                bA[2] = Color.blue(color2);
-                bA[3] = Color.blue(color3);
-                bA[4] = Color.blue(color4);
-                bA[5] = Color.blue(color);
-                bA[6] = Color.blue(color6);
-                bA[7] = Color.blue(color7);
-                bA[8] = Color.blue(color8);
-                bA[9] = Color.blue(color9);
+                        for (int l = sizeWidth; l < (sizeWidth + kernelWidth); l++) {
+                            if (l >= 0 && l < width) {
+                                color = img.getPixel(l, k);
+
+                                rA[array] = Color.red(color);
+                                gA[array] = Color.green(color);
+                                bA[array] = Color.blue(color);
+                            }
+
+                            array++;
+                        }
+                    }
+                }
 
                 int r = getMedian(rA);
                 int g = getMedian(gA);
@@ -961,11 +1002,14 @@ public class ImageProcessing {
     }
 
     public void getNormalSkecthImage(Bitmap img) {
+        getGrayMean(img);
         getSobelImage(img);
         getInvertImg(img);
     }
 
     public void getSketchImage(Bitmap img) {
+        getGrayMean(img);
+
         Bitmap imgHorizontal = img.copy(img.getConfig(), true);
         Bitmap imgVertical = img.copy(img.getConfig(), true);
 
@@ -1232,6 +1276,127 @@ public class ImageProcessing {
 //        return result;
     }
 
+    private void initializeArray0(int[] temp) {
+        for (int i = 0; i < temp.length; i++)
+            temp[i] = 0;
+    }
+
+    private void getHistProjection(Bitmap img, int[] temp) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int color = img.getPixel(i, j);
+                int gray = Color.red(color);
+                int biner = gray / 255;
+
+                temp[i] += biner == 0 ? 1 : 0;
+            }
+        }
+    }
+
+    public int getNumMatch(Activity activity, Bitmap img) {
+        int width = img.getWidth();
+
+        int[] tempImg = new int[width];
+        int[] temp0 = new int[width];
+        int[] temp1 = new int[width];
+        int[] temp2 = new int[width];
+        int[] temp3 = new int[width];
+        int[] temp4 = new int[width];
+        int[] temp5 = new int[width];
+        int[] temp6 = new int[width];
+        int[] temp7 = new int[width];
+        int[] temp8 = new int[width];
+        int[] temp9 = new int[width];
+
+        int[][] temp = {
+                temp0,
+                temp1,
+                temp2,
+                temp3,
+                temp4,
+                temp5,
+                temp6,
+                temp7,
+                temp8,
+                temp9,
+        };
+
+        int[] tempMin = new int[temp.length];
+
+        initializeArray0(tempMin);
+        initializeArray0(tempImg);
+        initializeArray0(temp0);
+        initializeArray0(temp1);
+        initializeArray0(temp2);
+        initializeArray0(temp3);
+        initializeArray0(temp4);
+        initializeArray0(temp5);
+        initializeArray0(temp6);
+        initializeArray0(temp7);
+        initializeArray0(temp8);
+        initializeArray0(temp9);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 3;
+        options.inMutable = true;
+
+        Bitmap num0 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_0, options);
+        Bitmap num1 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_1, options);
+        Bitmap num2 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_2, options);
+        Bitmap num3 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_3, options);
+        Bitmap num4 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_4, options);
+        Bitmap num5 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_5, options);
+        Bitmap num6 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_6, options);
+        Bitmap num7 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_7, options);
+        Bitmap num8 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_8, options);
+        Bitmap num9 = BitmapFactory.decodeResource(activity.getResources(), R.drawable.num_9, options);
+
+        getBlackAndWhite(img, 128);
+        getBlackAndWhite(num0, 128);
+        getBlackAndWhite(num1, 128);
+        getBlackAndWhite(num2, 128);
+        getBlackAndWhite(num3, 128);
+        getBlackAndWhite(num4, 128);
+        getBlackAndWhite(num5, 128);
+        getBlackAndWhite(num6, 128);
+        getBlackAndWhite(num7, 128);
+        getBlackAndWhite(num8, 128);
+        getBlackAndWhite(num9, 128);
+
+        getHistProjection(img, tempImg);
+        getHistProjection(num0, temp0);
+        getHistProjection(num1, temp1);
+        getHistProjection(num2, temp2);
+        getHistProjection(num3, temp3);
+        getHistProjection(num4, temp4);
+        getHistProjection(num5, temp5);
+        getHistProjection(num6, temp6);
+        getHistProjection(num7, temp7);
+        getHistProjection(num8, temp8);
+        getHistProjection(num9, temp9);
+
+        for (int i = 0; i < temp.length; i++) {
+            for (int j = 0; j < temp[i].length; j++) {
+                tempMin[i] += Math.abs(tempImg[j] - temp[i][j]);
+            }
+        }
+
+        int minIndex = 0;
+        int min = tempMin[minIndex];
+
+        for (int i = 1; i < tempMin.length; i++) {
+            if (min > tempMin[i]) {
+                min = tempMin[i];
+                minIndex = i;
+            }
+        }
+
+        return minIndex;
+    }
+
     public void getLevitationImage(Bitmap imgBackground, Bitmap imgWithoutItem, Bitmap imgWithItem, Bitmap imgLevitation) {
         int width = imgBackground.getWidth();
         int height = imgBackground.getHeight();
@@ -1250,9 +1415,15 @@ public class ImageProcessing {
                 green = pixelNormalization(green);
                 blue = pixelNormalization(blue);
 
-                red += Color.red(colorBackground);
-                green += Color.green(colorBackground);
-                blue += Color.blue(colorBackground);
+                if (red == 0 || green == 0 || blue == 0) {
+                    red = Color.red(colorWithItem);
+                    green = Color.green(colorWithItem);
+                    blue = Color.blue(colorWithItem);
+                } else {
+                    red += Color.red(colorBackground);
+                    green += Color.green(colorBackground);
+                    blue += Color.blue(colorBackground);
+                }
 
                 int color = Color.rgb(red, green, blue);
 

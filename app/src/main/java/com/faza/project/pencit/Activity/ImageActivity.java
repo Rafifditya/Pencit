@@ -160,6 +160,9 @@ public class ImageActivity extends AppCompatActivity {
             case R.id.menu_detection_tomato_maturity:
                 detectionOfTomatoMaturity();
                 return true;
+            case R.id.menu_detection_num_hist_projection:
+                detectionOfNumWithHistProjection();
+                return true;
             case R.id.menu_kmeans_cluster:
                 setKMeansClusterDialog();
                 return true;
@@ -368,6 +371,34 @@ public class ImageActivity extends AppCompatActivity {
                 msg += " " + getString(R.string.mature);
                 break;
         }
+
+        builder.setTitle(title)
+                .setMessage(msg)
+                .setNegativeButton(ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+
+    private void detectionOfNumWithHistProjection() {
+        Bitmap img = StaticBitmap.image.copy(StaticBitmap.image.getConfig(), true);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String title = getString(R.string.detection_num_hist_projection);
+        String msg = getString(R.string.num_msg);
+        String ok = getString(R.string.ok);
+
+        int result = imageProcessing.getNumMatch(this, img);
+
+        msg += " " + result;
 
         builder.setTitle(title)
                 .setMessage(msg)

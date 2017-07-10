@@ -18,6 +18,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_detection_num_hist_projection"
+        android:title="@string/detection_num_hist_projection"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_kmeans_cluster"
         android:title="@string/kmeans_cluster"
         app:showAsAction="never" />

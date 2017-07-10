@@ -130,7 +130,7 @@ public class AdapterThread extends AsyncTask<Integer, Void, Bitmap> {
                 imageProcessing.getGaussianFilterImage(img);
                 break;
             case "Filter Median":
-                imageProcessing.getMedianFilterImage(img);
+                imageProcessing.getMedianFilterImage(img, 3, 3);
                 break;
             case "Auto Level":
                 imageProcessing.getAutoLevelImage(img);
