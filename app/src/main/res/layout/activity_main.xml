@@ -67,12 +67,53 @@
         android:contentDescription="@string/app_name"
         android:src="@drawable/ic_android" />
 
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cv_menu"
+        android:layout_marginTop="@dimen/activity_2x_vertical_margin"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/colorWhite"
+        android:text="Dibuat oleh : "/>
+
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv1"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/colorWhite"
+        android:text="Faza Zulfika Permana Putra - 2110151023"/>
+
+    <TextView
+        android:id="@+id/tv3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv2"
+        android:layout_marginTop="@dimen/activity_half_vertical_margin"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/colorWhite"
+        android:text="D4 Teknik Informatika"/>
+
+    <TextView
+        android:id="@+id/tv4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv3"
+        android:layout_marginTop="@dimen/activity_half_vertical_margin"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/colorWhite"
+        android:text="Politeknik Elektronika Negeri Surabaya"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/cv_menu"
         android:layout_marginTop="@dimen/activity_2x_vertical_margin"
+        android:visibility="gone"
         android:background="@color/colorBg" />
 
 </RelativeLayout>

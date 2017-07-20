@@ -1401,6 +1401,10 @@ public class ImageProcessing {
         int width = imgBackground.getWidth();
         int height = imgBackground.getHeight();
 
+        getAutoLevelImage(imgBackground);
+        getAutoLevelImage(imgWithoutItem);
+        getAutoLevelImage(imgWithItem);
+
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int colorBackground = imgBackground.getPixel(i, j);
@@ -1411,19 +1415,23 @@ public class ImageProcessing {
                 int green = (Color.green(colorWithItem) - Color.green(colorWithoutItem));
                 int blue = (Color.blue(colorWithItem) - Color.blue(colorWithoutItem));
 
-                red = pixelNormalization(red);
-                green = pixelNormalization(green);
-                blue = pixelNormalization(blue);
+                red += Color.red(colorBackground);
+                green += Color.green(colorBackground);
+                blue += Color.blue(colorBackground);
 
-                if (red == 0 || green == 0 || blue == 0) {
-                    red = Color.red(colorWithItem);
-                    green = Color.green(colorWithItem);
-                    blue = Color.blue(colorWithItem);
-                } else {
-                    red += Color.red(colorBackground);
-                    green += Color.green(colorBackground);
-                    blue += Color.blue(colorBackground);
-                }
+//                red = pixelNormalization(red);
+//                green = pixelNormalization(green);
+//                blue = pixelNormalization(blue);
+//
+//                if (red == 0 || green == 0 || blue == 0) {
+//                    red = Color.red(colorWithItem);
+//                    green = Color.green(colorWithItem);
+//                    blue = Color.blue(colorWithItem);
+//                } else {
+//                    red += Color.red(colorBackground);
+//                    green += Color.green(colorBackground);
+//                    blue += Color.blue(colorBackground);
+//                }
 
                 int color = Color.rgb(red, green, blue);
 
